@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+**/lib
+**.history/
+**.env
+**.env.local
+**.env.production
+**.tsbuildinfo
+*.tsbuildinfo
+**/persist
+**/storage
+**/coverage
+**/videos
+redis-data/*
+**/data-postgres

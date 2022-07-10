@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["react-dom/next", "react/next"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": "./src",
+    "incremental": true,
+    "composite": true,
+    "paths": {
+      "@comp/*": ["./components/*"],
+      "@utils/*": ["./utils/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "references": [
+    {
+      "path": "../../common/api/tsconfig.build.json"
+    },
+    {
+      "path": "../../common/web/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["node_modules"]
+}

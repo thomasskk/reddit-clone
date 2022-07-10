@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@layer components {
+  .main {
+    @apply flex flex-col min-h-screen m-auto sm:w-full pt-44 mb-20 pb-44;
+  }
+  .button {
+    @apply rounded hover:shadow-s2 disabled:opacity-70 disabled:shadow-none text-white justify-center py-1 px-2 flex items-center font-semibold border-0;
+  }
+  .form {
+    @apply flex flex-col gap-5;
+  }
+  .heading {
+    @apply text-3xl text-center lg:text-3xl md:text-2xl uppercase m-14 text-primary1;
+  }
+  .container {
+    @apply flex bg-white gap-5 h-max p-5 flex-col shadow-md rounded-lg mx-auto;
+  }
+  .radio {
+    @apply rounded-full appearance-none h-3 w-3 shrink-0 cursor-pointer checked:bg-primary1 border border-primary1;
+  }
+  .checkbox {
+    @apply appearance-none h-3 w-3 shrink-0 cursor-pointer checked:bg-primary1 border border-primary1;
+  }
+  .textarea {
+    @apply w-full h-24 text-sm bg-white rounded-lg border-2 border-primary1 p-2 font-semibold outline-none placeholder:text-gray-400;
+  }
+  .title {
+    @apply text-xl uppercase text-primary4;
+  }
+  .modal {
+    @apply rounded-lg h-max shadow-s1 sm:w-full bg-white w-[30rem];
+  }
+  .sim-box {
+    @apply rounded;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 80%;
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  html {
+    font-size: 90%;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+input[type='submit'] {
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; /* added line */
+  border: 0;
+}

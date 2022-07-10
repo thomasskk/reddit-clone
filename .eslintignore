@@ -1,0 +1,10 @@
+*.css
+*.scss
+*.js
+*.d.ts
+*.d.ts.map
+*.js.map
+dist
+lib
+.next
+tsconfig.tsbuildinfo
