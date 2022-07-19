@@ -1,0 +1,137 @@
+generator client {
+        provider = "prisma-client-js"
+}
+
+datasource db {
+        provider = "postgresql"
+        url      = env("DATABASE_URL")
+}
+
+model User {
+        id                   Int            @id @unique @default(autoincrement())
+        email                String         @unique
+        emailVerified        DateTime?      @map("email_verified")
+        image                String?
+        username             String         @unique @db.VarChar(50)
+        passwordHash         String         @map("password_hash")
+        phoneNumber          String?        @unique @map("phone_number") @db.VarChar(20)
+        phoneNumberConfirmed Boolean        @default(false) @map("phone_number_confirmed")
+        twoFactorEnabled     Boolean        @default(false) @map("two_factor_enabled")
+        accessFailedCount    Int            @default(0) @map("access_failed_count")
+        registrationDate     DateTime       @default(now())
+        lastLoginFromIp      String         @map("last_login_from_ip") @db.VarChar(20)
+        lastLoginDate        DateTime       @default(now()) @map("last_login_date")
+        notifications        Notification[]
+
+        @@map("users")
+}
+
+model Comment {
+        id                   Int                @id @unique @default(autoincrement())
+        username             String             @db.VarChar(50)
+        parentId             Int                @map("parent_id")
+        content              String             @db.VarChar
+        creationDate         DateTime           @map("creation_date")
+        lastEditDate         DateTime?          @map("last_edit_date") @db.Timestamp(6)
+        upCount              Int                @map("up_count")
+        downCount            Int                @map("down_count")
+        isDeleted            Int?               @map("is_deleted")
+        submission           Submission         @relation(fields: [submissionId], references: [id])
+        submissionId         Int                @map("submission_id")
+        commentVoteTracker   CommentVoteTracker @relation(fields: [commentVoteTrackerId], references: [id])
+        commentVoteTrackerId Int                @unique @map("comment_vote_tracker_id")
+
+        @@map("comments")
+}
+
+model CommentVoteTracker {
+        id           Int      @id @unique @default(autoincrement())
+        username     String   @db.VarChar(50)
+        voteStatus   Int      @map("vote_status")
+        creationDate DateTime @map("creation_date") @db.Timestamp(6)
+        ipAddress    String?  @map("ip_address") @db.VarChar(90)
+        voteValue    Float    @map("vote_value")
+        comment      Comment?
+
+        @@map("comment_vote_trackers")
+}
+
+model Notification {
+        id                   Int                   @id @unique @default(autoincrement())
+        title                String                @db.VarChar(100)
+        content              String                @db.VarChar(100)
+        url                  String                @db.VarChar(500)
+        sentAtDate           DateTime?             @map("sent_at_date") @db.Timestamp(6)
+        readAtDate           DateTime?             @map("read_at_date") @db.Timestamp(6)
+        viewedAtDate         DateTime?             @map("viewed_at_date") @db.Timestamp(6)
+        avatarUrl            String                @map("avatar_url") @db.VarChar(500)
+        user                 User                  @relation(fields: [userId], references: [id])
+        userId               Int                   @map("user_id")
+        notification_context NotificationContext[]
+
+        @@map("notifications")
+}
+
+model NotificationContext {
+        id             Int          @id @unique @default(autoincrement())
+        notificationId Int          @map("notification_id")
+        notification   Notification @relation(fields: [notificationId], references: [id])
+
+        @@map("notification_contexts")
+}
+
+model Subverse {
+        id                 Int          @id @unique @default(autoincrement())
+        name               String       @unique @db.VarChar(20)
+        title              String       @db.VarChar(100)
+        description        String       @db.VarChar(500)
+        creationDate       DateTime     @map("creation_date") @db.Timestamp(6)
+        subscriberCount    Int          @map("subscriber_count")
+        isPrivate          Boolean      @map("is_private")
+        isAuthorizedOnly   Boolean      @map("is_authorized_only")
+        lastSubmissionDate DateTime     @map("last_submission_date") @db.Timestamp(6)
+        createdBy          String?      @map("created_by") @db.VarChar(50)
+        lastUpdateDate     DateTime?    @map("last_update_date") @db.Timestamp(6)
+        submission         Submission[]
+
+        @@map("subverses")
+}
+
+model Submission {
+        id                      Int                     @id @unique @default(autoincrement())
+        username                String                  @db.VarChar(50)
+        content                 String?                 @db.VarChar
+        creationDate            DateTime                @map("creation_date") @db.Timestamp(6)
+        lastEditDate            DateTime?               @map("last_edit_date") @db.Timestamp(6)
+        subverseName            String                  @map("subverse_name") @db.VarChar(20)
+        type                    Int
+        title                   String                  @db.VarChar(200)
+        upCount                 Int                     @map("up_count")
+        downCount               Int                     @map("down_count")
+        thumbail                String?                 @db.VarChar(150)
+        flairLabel              String?                 @map("flair_label") @db.VarChar(50)
+        views                   Float
+        isDeleted               Boolean                 @map("is_deleted")
+        url                     String?                 @db.VarChar(3000)
+        archiveDate             DateTime?               @map("archive_date") @db.Timestamp(6)
+        subverse                Subverse                @relation(fields: [subverseName], references: [name])
+        comment                 Comment[]
+        submission_vote_tracker SubmissionVoteTracker[]
+
+
+        @@map("submissions")
+}
+
+model SubmissionVoteTracker {
+        id           Int        @id @unique @default(autoincrement())
+        username     String     @db.VarChar(50)
+        voteStatus   Int        @map("vote_status")
+        creationDate DateTime   @map("creation_date") @db.Timestamp(6)
+        ipAddress    String?    @map("ip_address") @db.VarChar(90)
+        voteValue    Float      @map("vote_value")
+        submission   Submission @relation(fields: [submissionId], references: [id])
+        submissionId Int        @map("submission_id")
+
+
+        @@map("submission_vote_trackers")
+}
