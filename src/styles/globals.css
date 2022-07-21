@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
+
+@layer components {
+  .input {
+    @apply w-full peer-focus:text-blue-600 flex px-2 py-1 text-sm text-gray-900 bg-primary2 border border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 placeholder:text-text2 focus:bg-transparent;
+  }
+
+  .input-form {
+    @apply peer-focus:text-blue-600 rounded flex p-2 text-sm text-gray-900 bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+}

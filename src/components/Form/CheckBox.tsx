@@ -13,7 +13,7 @@ type Props = {
   message?: UseFormRegisterOptions<any, any>['message']
 }
 
-export default function Index(props: Props) {
+export const CheckBox = (props: Props) => {
   const { checkboxes, label, onChange, name, transform } = props
   const id = useId()
 

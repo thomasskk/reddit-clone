@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-        id                   Int            @id @unique @default(autoincrement())
+        id                   String         @id @default(cuid())
         email                String         @unique
         emailVerified        DateTime?      @map("email_verified")
         image                String?
@@ -22,33 +22,50 @@ model User {
         lastLoginFromIp      String         @map("last_login_from_ip") @db.VarChar(20)
         lastLoginDate        DateTime       @default(now()) @map("last_login_date")
         notifications        Notification[]
+        Comment              Comment[]
+        UserSub              UserSub[]
+        Sub                  Sub[]
 
         @@map("users")
 }
 
+model UserSub {
+        id          String  @id @default(cuid())
+        userId      String  @map("user_id")
+        user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+        subId       String  @map("sub_name")
+        sub         Sub     @relation(fields: [subId], references: [id])
+        isModerator Boolean @default(false) @map("is_moderator")
+        isFavorite  Boolean @default(false) @map("is_favorite")
+
+        @@map("user_subs")
+}
+
 model Comment {
-        id                   Int                @id @unique @default(autoincrement())
+        id                   String             @id @default(cuid())
         username             String             @db.VarChar(50)
+        userId               String             @map("user_id")
+        user                 User               @relation(fields: [userId], references: [id])
         parentId             Int                @map("parent_id")
         content              String             @db.VarChar
-        creationDate         DateTime           @map("creation_date")
-        lastEditDate         DateTime?          @map("last_edit_date") @db.Timestamp(6)
+        creationDate         DateTime           @default(now()) @map("creation_date")
+        lastEditDate         DateTime           @default(now()) @map("last_edit_date")
         upCount              Int                @map("up_count")
         downCount            Int                @map("down_count")
         isDeleted            Int?               @map("is_deleted")
         submission           Submission         @relation(fields: [submissionId], references: [id])
-        submissionId         Int                @map("submission_id")
+        submissionId         String             @map("submission_id")
         commentVoteTracker   CommentVoteTracker @relation(fields: [commentVoteTrackerId], references: [id])
-        commentVoteTrackerId Int                @unique @map("comment_vote_tracker_id")
+        commentVoteTrackerId String             @unique @map("comment_vote_tracker_id")
 
         @@map("comments")
 }
 
 model CommentVoteTracker {
-        id           Int      @id @unique @default(autoincrement())
+        id           String   @id @default(cuid())
         username     String   @db.VarChar(50)
         voteStatus   Int      @map("vote_status")
-        creationDate DateTime @map("creation_date") @db.Timestamp(6)
+        creationDate DateTime @default(now()) @map("creation_date")
         ipAddress    String?  @map("ip_address") @db.VarChar(90)
         voteValue    Float    @map("vote_value")
         comment      Comment?
@@ -57,53 +74,58 @@ model CommentVoteTracker {
 }
 
 model Notification {
-        id                   Int                   @id @unique @default(autoincrement())
-        title                String                @db.VarChar(100)
-        content              String                @db.VarChar(100)
-        url                  String                @db.VarChar(500)
-        sentAtDate           DateTime?             @map("sent_at_date") @db.Timestamp(6)
-        readAtDate           DateTime?             @map("read_at_date") @db.Timestamp(6)
-        viewedAtDate         DateTime?             @map("viewed_at_date") @db.Timestamp(6)
-        avatarUrl            String                @map("avatar_url") @db.VarChar(500)
-        user                 User                  @relation(fields: [userId], references: [id])
-        userId               Int                   @map("user_id")
-        notification_context NotificationContext[]
+        id                  String                @id @default(cuid())
+        title               String                @db.VarChar(100)
+        content             String                @db.VarChar(100)
+        url                 String                @db.VarChar(500)
+        sentAtDate          DateTime?             @map("sent_at_date")
+        readAtDate          DateTime?             @map("read_at_date")
+        viewedAtDate        DateTime?             @map("viewed_at_date")
+        avatarUrl           String                @map("avatar_url") @db.VarChar(500)
+        user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+        userId              String                @map("user_id")
+        notificationContext NotificationContext[]
 
         @@map("notifications")
 }
 
 model NotificationContext {
-        id             Int          @id @unique @default(autoincrement())
-        notificationId Int          @map("notification_id")
+        id             String       @id @default(cuid())
+        notificationId String       @map("notification_id")
         notification   Notification @relation(fields: [notificationId], references: [id])
 
         @@map("notification_contexts")
 }
 
-model Subverse {
-        id                 Int          @id @unique @default(autoincrement())
+model Sub {
+        id                 String       @id @default(cuid())
         name               String       @unique @db.VarChar(20)
         title              String       @db.VarChar(100)
         description        String       @db.VarChar(500)
-        creationDate       DateTime     @map("creation_date") @db.Timestamp(6)
-        subscriberCount    Int          @map("subscriber_count")
+        creationDate       DateTime     @default(now()) @map("creation_date")
         isPrivate          Boolean      @map("is_private")
         isAuthorizedOnly   Boolean      @map("is_authorized_only")
-        lastSubmissionDate DateTime     @map("last_submission_date") @db.Timestamp(6)
-        createdBy          String?      @map("created_by") @db.VarChar(50)
-        lastUpdateDate     DateTime?    @map("last_update_date") @db.Timestamp(6)
+        lastSubmissionDate DateTime     @default(now()) @map("last_submission_date")
+        thumbnailUrl       String       @map("thumbnail_url") @db.VarChar(500)
+        colorTheme         String       @map("color_theme") @db.VarChar(20)
+        user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+        userId             String       @map("user_id")
+        lastUpdateDate     DateTime     @default(now()) @map("last_update_date")
         submission         Submission[]
+        memberCount        Int          @default(0) @map("member_count")
+        UserSub            UserSub[]
 
-        @@map("subverses")
+        @@index([name])
+        @@map("subs")
 }
 
 model Submission {
-        id                      Int                     @id @unique @default(autoincrement())
+        id                      String                  @id @default(cuid())
         username                String                  @db.VarChar(50)
         content                 String?                 @db.VarChar
-        creationDate            DateTime                @map("creation_date") @db.Timestamp(6)
-        lastEditDate            DateTime?               @map("last_edit_date") @db.Timestamp(6)
-        subverseName            String                  @map("subverse_name") @db.VarChar(20)
+        creationDate            DateTime                @default(now()) @map("creation_date")
+        lastEditDate            DateTime?               @default(now()) @map("last_edit_date")
+        subName                 String                  @map("sub_name") @db.VarChar(20)
         type                    Int
         title                   String                  @db.VarChar(200)
         upCount                 Int                     @map("up_count")
@@ -113,25 +135,23 @@ model Submission {
         views                   Float
         isDeleted               Boolean                 @map("is_deleted")
         url                     String?                 @db.VarChar(3000)
-        archiveDate             DateTime?               @map("archive_date") @db.Timestamp(6)
-        subverse                Subverse                @relation(fields: [subverseName], references: [name])
+        archiveDate             DateTime?               @default(now()) @map("archive_date")
+        sub                     Sub                     @relation(fields: [subName], references: [name])
         comment                 Comment[]
         submission_vote_tracker SubmissionVoteTracker[]
-
 
         @@map("submissions")
 }
 
 model SubmissionVoteTracker {
-        id           Int        @id @unique @default(autoincrement())
+        id           String     @id @default(cuid())
         username     String     @db.VarChar(50)
         voteStatus   Int        @map("vote_status")
-        creationDate DateTime   @map("creation_date") @db.Timestamp(6)
+        creationDate DateTime   @default(now()) @map("creation_date")
         ipAddress    String?    @map("ip_address") @db.VarChar(90)
         voteValue    Float      @map("vote_value")
         submission   Submission @relation(fields: [submissionId], references: [id])
-        submissionId Int        @map("submission_id")
-
+        submissionId String     @map("submission_id")
 
         @@map("submission_vote_trackers")
 }

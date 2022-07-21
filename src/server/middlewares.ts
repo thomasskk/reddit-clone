@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
-import { procedure, t } from './trpc'
+import { procedure, trpc } from './trpc'
 
 export const authedProcedure = procedure.use(
-  t.middleware(({ ctx, next }) => {
+  trpc.middleware(({ ctx, next }) => {
     if (!ctx.session) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }

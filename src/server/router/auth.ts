@@ -1,4 +1,4 @@
-import { procedure, t } from '../trpc'
+import { procedure, trpc } from '../trpc'
 import { authedProcedure } from '../middlewares'
 import { registerSchema } from '~/common/validation/auth'
 import * as z from 'myzod'
@@ -6,7 +6,7 @@ import { db } from '../prisma'
 import { AuthService } from '../services/auth'
 import { TrackerService } from '../services/tracker'
 
-export const authRouter = t.router({
+export const authRouter = trpc.router({
   //////////////////////////////////////////
   me: authedProcedure.query(() => {}),
   //////////////////////////////////////////

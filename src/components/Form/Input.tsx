@@ -16,7 +16,7 @@ type Props = {
   errors?: string[]
 }
 
-export default function Input(props: Props) {
+export const Input = (props: Props) => {
   const {
     error,
     label,
@@ -52,7 +52,7 @@ export default function Input(props: Props) {
       </div>
       <input
         autoComplete={autoComplete}
-        className='peer-focus:text-blue-600 rounded flex p-2 text-sm text-gray-900 bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600'
+        className='input-form'
         placeholder=' '
         aria-invalid={err?.[0] ? 'true' : 'false'}
         id={id}

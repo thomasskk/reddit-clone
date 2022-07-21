@@ -4,7 +4,7 @@ type Props = {
   error?: string[]
 }
 
-export function Error(props: Props) {
+export const Error = (props: Props) => {
   const { error } = props
   const ref = useRef<HTMLParagraphElement>(null)
 

@@ -2,21 +2,19 @@ import { Box, Progress, Text } from '@mantine/core'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { useRef, useState } from 'react'
 import { UseFormRegister } from 'react-proxy-form'
-import Input from './Input'
+import { Input } from './Input'
 
-function PasswordRequirement(props: { label: string }) {
-  return (
-    <Text
-      color='red'
-      sx={{ display: 'flex', alignItems: 'center' }}
-      mt={7}
-      size='sm'
-    >
-      <Cross1Icon />
-      <Box ml={10}>{props.label}</Box>
-    </Text>
-  )
-}
+const PasswordRequirement = (props: { label: string }) => (
+  <Text
+    color='red'
+    sx={{ display: 'flex', alignItems: 'center' }}
+    mt={7}
+    size='sm'
+  >
+    <Cross1Icon />
+    <Box ml={10}>{props.label}</Box>
+  </Text>
+)
 
 const requirements = [
   { re: /^(?=.{8,}$).*/, label: 'Passord must be at least 8 characters' },
@@ -26,7 +24,7 @@ const requirements = [
   { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol' },
 ]
 
-function getStrength(password: string) {
+const getStrength = (password: string) => {
   let multiplier = password.length > 5 ? 0 : 1
 
   requirements.forEach((requirement) => {
@@ -38,11 +36,11 @@ function getStrength(password: string) {
   return Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 10)
 }
 
-export function PasswordStrength(props: {
+export const PasswordStrength = (props: {
   register: UseFormRegister<any>
   name: string
   error: any
-}) {
+}) => {
   const [value, setValue] = useState('')
   const init = useRef(false)
 

@@ -18,7 +18,7 @@ type Props = {
   isLoading?: boolean
 }
 
-export default function Index(props: Props) {
+export const Radio = (props: Props) => {
   const {
     radios,
     label,

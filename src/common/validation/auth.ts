@@ -3,7 +3,10 @@ import { isEmail } from './helper'
 
 export const loginSchema = z.object({
   email: isEmail(),
-  password: z.string().min(8, 'pass').max(128, 'Password is too long'),
+  password: z
+    .string()
+    .min(8, 'Must be at least 8 characters')
+    .max(128, 'Must be less than 128 characters'),
 })
 
 export const registerSchema = loginSchema.and(

@@ -2,7 +2,7 @@ import { Context } from './context'
 import { initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 
-export const t = initTRPC<{
+export const trpc = initTRPC<{
   ctx: Context
 }>()({
   transformer: superjson,
@@ -24,8 +24,8 @@ export const t = initTRPC<{
   },
 })
 
-export const procedure = t.procedure.use(
-  t.middleware(async ({ next, type, path }) => {
+export const procedure = trpc.procedure.use(
+  trpc.middleware(async ({ next, type, path }) => {
     const start = Date.now()
     const res = await next()
     const duration = Date.now() - start

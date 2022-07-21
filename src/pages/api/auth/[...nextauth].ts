@@ -6,7 +6,7 @@ import { cryptoUtils } from '~/server/utils/crypto'
 
 declare module 'next-auth' {
   interface User {
-    id: number
+    id: string
   }
 
   interface Session {

@@ -2,7 +2,6 @@ import { NextPage } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
 import { ReactElement, ReactNode, useEffect } from 'react'
-import { DefaultLayout } from '~/layouts/DefaultLayout'
 import { trpc } from '~/utils/trpc'
 import '../styles/globals.css'
 import 'nprogress/nprogress.css'
@@ -11,6 +10,7 @@ import NProgress from 'nprogress'
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider } from '@mantine/notifications'
 import { Provider as JotaiProvider } from 'jotai'
+import { SSRProvider as AriaProvider } from 'react-aria'
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -24,8 +24,7 @@ const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) => {
-  const getLayout =
-    Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>)
+  const getLayout = Component.getLayout ?? ((page) => page)
 
   useEffect(() => {
     const handleRouteStart = () => NProgress.start()
@@ -43,15 +42,17 @@ const MyApp = ({
   }, [])
 
   return (
-    <SessionProvider session={session}>
-      <JotaiProvider>
-        <MantineProvider emotionOptions={{ key: 'mantine', prepend: false }}>
-          <NotificationsProvider position='top-center' className='mt-24'>
-            {getLayout(<Component {...pageProps} />)}
-          </NotificationsProvider>
-        </MantineProvider>
-      </JotaiProvider>
-    </SessionProvider>
+    <AriaProvider>
+      <SessionProvider session={session}>
+        <JotaiProvider>
+          <MantineProvider emotionOptions={{ key: 'mantine', prepend: false }}>
+            <NotificationsProvider position='top-center' className='mt-24'>
+              {getLayout(<Component {...pageProps} />)}
+            </NotificationsProvider>
+          </MantineProvider>
+        </JotaiProvider>
+      </SessionProvider>
+    </AriaProvider>
   )
 }
 
