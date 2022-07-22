@@ -26,27 +26,25 @@ const MenuPortal = (props: { children: ReactNode; isOpen: boolean }) =>
     <>{props.children}</>
   )
 
-export const NavMenu = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+export const CommunityMenu = () => {
+  const [subBadgeData] = useAtom(atoms.subBadgeData)
   const [isSideMenu, setIsSideMenu] = useAtom(atoms.isSideMenu)
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [hoveredId, setHoverId] = useState<any>('')
+  const [node, setNode] = useState<any>(null)
   const [subs, setSubs] = useState<GetSubs>([])
 
   const filter = useRef('')
-
-  const getSubMut = t.user.getSubs.useQuery(undefined, {
-    onSuccess: (subs) => setDataAndFilter(subs),
-    enabled: isMenuOpen,
-  })
-
-  const [node, setNode] = useState<any>(null)
+  const menuItems = useRef(new Map<string, HTMLElement>())
 
   const ref = useClickOutside(() => !isSideMenu && setIsMenuOpen(false), null, [
     node,
   ])
 
-  const menuItems = useRef(new Map<string, HTMLElement>())
-  const [hoveredId, setHoverId] = useState<any>('')
+  const getSubMut = t.user.getSubs.useQuery(undefined, {
+    onSuccess: (subs) => setDataAndFilter(subs),
+    enabled: isMenuOpen,
+  })
 
   const setDataAndFilter = (data: GetSubs) => {
     setSubs(
@@ -86,18 +84,18 @@ export const NavMenu = () => {
         }
         break
       case e.key === 'Enter':
+        e.preventDefault()
         menuItems.current.get(hoveredId)?.click()
         break
     }
   }
-  const [subBadgeData] = useAtom(atoms.subBadgeData)
 
   return (
-    <div className='relative w-64 h-8' ref={setNode} role='navigation'>
+    <div className='relative w-64' ref={setNode} role='navigation'>
       <button
-        className={`w-full border rounded flex items-center justify-between gap-20 py-1 px-2 ${
+        className={`h-9 w-full border rounded flex items-center justify-between gap-20 py-1 px-2 ${
           isMenuOpen && !isSideMenu
-            ? 'border-b-0 border-gray-200 rounded-b-none mb-[-1px]'
+            ? 'border-b-0 border-gray-200 rounded-b-none mt-[-1px]'
             : 'border-transparent'
         } ${isSideMenu ? '' : 'border hover:border-gray-200'}`}
         onClick={() => !isSideMenu && setIsMenuOpen((v) => !v)}

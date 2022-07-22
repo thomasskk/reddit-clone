@@ -1,7 +1,8 @@
 import React from 'react'
 import Image from 'next/future/image'
-import { NavMenu } from './NavMenu'
+import { CommunityMenu } from './CommunityMenu'
 import router from 'next/router'
+import { SearchBar } from './SearchBar'
 
 export const Navbar = () => (
   <div className='flex h-12 bg-primary1 px-5 items-center gap-5 sticky top-0'>
@@ -15,6 +16,7 @@ export const Navbar = () => (
       />
       <span className='uppercase font-bold'>social</span>
     </div>
-    <NavMenu />
+    <CommunityMenu />
+    <SearchBar />
   </div>
 )
