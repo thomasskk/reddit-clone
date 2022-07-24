@@ -25,6 +25,7 @@ model User {
         Comment              Comment[]
         UserSub              UserSub[]
         Sub                  Sub[]
+        Post                 Post[]
 
         @@map("users")
 }
@@ -119,26 +120,34 @@ model Sub {
         @@map("subs")
 }
 
+enum PostType {
+        TEXT
+        IMAGE
+        VIDEO
+        AUDIO
+        LINK
+}
+
 model Post {
-        id                String            @id @default(cuid())
-        username          String            @db.VarChar(50)
-        content           String?           @db.VarChar
-        creationDate      DateTime          @default(now()) @map("creation_date")
-        lastEditDate      DateTime?         @default(now()) @map("last_edit_date")
-        subId             String            @map("sub_name")
-        sub               Sub               @relation(fields: [subId], references: [id])
-        type              Int
-        title             String            @db.VarChar(200)
-        upCount           Int               @map("up_count")
-        downCount         Int               @map("down_count")
-        thumbail          String?           @db.VarChar(150)
-        flairLabel        String?           @map("flair_label") @db.VarChar(50)
-        views             Float
-        isDeleted         Boolean           @map("is_deleted")
-        url               String?           @db.VarChar(3000)
-        archiveDate       DateTime?         @default(now()) @map("archive_date")
-        comment           Comment[]
-        post_vote_tracker PostVoteTracker[]
+        id              String            @id @default(cuid())
+        user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+        userId          String            @map("user_id")
+        content         String?           @db.VarChar
+        creationDate    DateTime          @default(now()) @map("creation_date")
+        lastEditDate    DateTime?         @default(now()) @map("last_edit_date")
+        subId           String            @map("sub_id")
+        sub             Sub               @relation(fields: [subId], references: [id])
+        type            PostType
+        title           String            @db.VarChar(200)
+        upCount         Int               @default(0) @map("up_count")
+        downCount       Int               @default(0) @map("down_count")
+        thumbail        String?           @db.VarChar(150)
+        flairLabel      String?           @map("flair_label") @db.VarChar(50)
+        views           Float             @default(0)
+        isDeleted       Boolean           @default(false) @map("is_deleted")
+        url             String?           @db.VarChar(3000)
+        comment         Comment[]
+        PostVoteTracker PostVoteTracker[]
 
         @@map("posts")
 }

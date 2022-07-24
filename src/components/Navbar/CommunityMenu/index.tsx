@@ -6,6 +6,7 @@ import { BsLayoutSidebarInset } from 'react-icons/bs'
 import { CgClose } from 'react-icons/cg'
 import { TbChevronDown } from 'react-icons/tb'
 import { SkeletonList } from '~/components/SkeletonList'
+import { useMenu } from '~/hooks/useMenu'
 import { atoms } from '~/store'
 import { inferQueryOutput, t } from '~/utils/trpc'
 import { SubBadge } from './SubBadge'
@@ -30,18 +31,18 @@ export const CommunityMenu = () => {
   const [subBadgeData] = useAtom(atoms.subBadgeData)
   const [isSideMenu, setIsSideMenu] = useAtom(atoms.isSideMenu)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [hoveredId, setHoverId] = useState<any>('')
   const [node, setNode] = useState<any>(null)
   const [subs, setSubs] = useState<GetSubs>([])
 
+  const { hoveredId, setHoveredId, menuItems, handleKeyDown } = useMenu()
+
   const filter = useRef('')
-  const menuItems = useRef(new Map<string, HTMLElement>())
 
   const ref = useClickOutside(() => !isSideMenu && setIsMenuOpen(false), null, [
     node,
   ])
 
-  const getSubMut = t.user.getSubs.useQuery(undefined, {
+  const query = t.user.getSubs.useQuery(undefined, {
     onSuccess: (subs) => setDataAndFilter(subs),
     enabled: isMenuOpen,
   })
@@ -54,40 +55,7 @@ export const CommunityMenu = () => {
         )
         .sort((a, b) => a.sub.name.localeCompare(b.sub.name))
     )
-    menuItems.current.clear()
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
-    switch (true) {
-      case e.key === 'Escape':
-        e.preventDefault()
-        setHoverId('')
-        e.target.blur()
-        break
-      case e.key === 'ArrowDown' || e.key === 'ArrowUp':
-        e.preventDefault()
-        const isKey = Array.from(menuItems.current.keys()).some(
-          (key, index, arr) => {
-            if (key === hoveredId) {
-              if (e.key === 'ArrowUp') {
-                setHoverId(arr[index - 1] || hoveredId)
-              }
-              if (e.key === 'ArrowDown') {
-                setHoverId(arr[index + 1] || hoveredId)
-              }
-              return true
-            }
-          }
-        )
-        if (!isKey) {
-          setHoverId(menuItems.current.keys().next().value)
-        }
-        break
-      case e.key === 'Enter':
-        e.preventDefault()
-        menuItems.current.get(hoveredId)?.click()
-        break
-    }
+    menuItems.clear()
   }
 
   return (
@@ -132,9 +100,9 @@ export const CommunityMenu = () => {
                 ? 'h-[calc(100vh-3rem)] w-72 py-2'
                 : 'absolute max-h-[480px] overflow-y-auto border-t-0 w-full py-3'
             }`}
-            onKeyDown={handleKeyDown as any}
+            onKeyDown={handleKeyDown}
           >
-            <li className='px-3 flex flex-col gap-1'>
+            <li className='px-3 flex flex-col gap-1' tabIndex={-1}>
               {isSideMenu && (
                 <div className='flex justify-between items-center mb-1'>
                   <h6 className='text-text2 uppercase text-xxs font-medium'>
@@ -155,12 +123,11 @@ export const CommunityMenu = () => {
                 className='input'
                 onChange={(e) => {
                   filter.current = e.target.value
-                  setDataAndFilter(getSubMut.data!)
+                  setDataAndFilter(query.data!)
                 }}
                 defaultValue={filter.current}
                 id='sub-filter'
                 autoFocus
-                ref={(el) => el?.focus()}
               />
             </li>
             {[
@@ -168,16 +135,16 @@ export const CommunityMenu = () => {
                 type: 'favorites',
                 name: 'favorites',
                 visible:
-                  (subs.some((d) => d.isFavorite) && !getSubMut.isLoading) ||
-                  getSubMut.isLoading,
+                  (subs.some((d) => d.isFavorite) && !query.isLoading) ||
+                  query.isLoading,
               },
               { type: 'all', name: 'your communities', visible: true },
               {
                 type: 'mod',
                 name: 'moderating',
                 visible:
-                  (subs.some((d) => d.isModerator) && !getSubMut.isLoading) ||
-                  getSubMut.isLoading,
+                  (subs.some((d) => d.isModerator) && !query.isLoading) ||
+                  query.isLoading,
               },
             ].map(
               (data) =>
@@ -185,12 +152,12 @@ export const CommunityMenu = () => {
                   <li className='flex flex-col gap-3' key={data.type}>
                     <ul>
                       <h6 className='mb-1 px-3 text-text2 uppercase text-xxs font-medium'>
-                        <Skeleton visible={getSubMut.isLoading}>
+                        <Skeleton visible={query.isLoading}>
                           {data.name}
                         </Skeleton>
                       </h6>
                       <SkeletonList
-                        visible={getSubMut.isLoading}
+                        visible={query.isLoading}
                         count={5}
                         height={18}
                       >
@@ -198,9 +165,9 @@ export const CommunityMenu = () => {
                           subs={subs}
                           setDataAndFilter={setDataAndFilter}
                           type={data.type as any}
-                          menuItems={menuItems.current}
+                          menuItems={menuItems}
                           hoveredId={hoveredId}
-                          setHoverId={setHoverId}
+                          setHoveredId={setHoveredId}
                         />
                       </SkeletonList>
                     </ul>

@@ -9,8 +9,8 @@ export const SubList = (props: {
   subs: GetSubs
   setDataAndFilter: (data: GetSubs) => void
   type: 'all' | 'favorites' | 'mod'
-  menuItems: Map<string, HTMLElement>
-  setHoverId: (id: string) => void
+  menuItems: Map<string, { el: HTMLElement; cb?: () => void }>
+  setHoveredId: (id: string) => void
   hoveredId: string
 }) => {
   const mutation = t.user.updateFavoriteSub.useMutation()
@@ -19,12 +19,13 @@ export const SubList = (props: {
     <>
       {props.type === 'all' && (
         <li
+          tabIndex={-1}
           role='menuitem'
-          onMouseEnter={() => props.setHoverId('all')}
+          onMouseEnter={() => props.setHoveredId('all')}
           className={`${
             props.hoveredId === 'all' ? 'bg-gray-50' : ''
           } px-3 py-2  flex gap-1 items-center cursor-pointer`}
-          ref={(el) => el && props.menuItems.set('all', el)}
+          ref={(el) => el && props.menuItems.set('all', { el })}
         >
           <FiPlus className='w-5 h-5' />
           <span className='text-sm text-text1'>Create community</span>
@@ -34,19 +35,22 @@ export const SubList = (props: {
         if (props.type === 'favorites' && !isFavorite) {
           return null
         }
+
         if (props.type === 'mod' && !isModerator) {
           return null
         }
+
         const subId = id + props.type
+
         return (
-          <li role='none' key={subId}>
+          <li role='none' key={subId} tabIndex={-1}>
             <Link href={`/r/${sub.name}`} passHref>
               <a
                 ref={(el) => el && props.menuItems.set(subId, el)}
                 className={`${props.hoveredId === subId ? 'bg-gray-50' : ''}
 		flex justify-between items-center cursor-pointer`}
                 role='menuitem'
-                onMouseEnter={() => props.setHoverId(subId)}
+                onMouseEnter={() => props.setHoveredId(subId)}
               >
                 <div className='px-3 py-2'>
                   <SubBadge thumbnailUrl={sub.thumbnailUrl} name={sub.name} />

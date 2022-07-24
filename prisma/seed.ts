@@ -54,6 +54,29 @@ async function main() {
     ],
   })
 
+  await prisma.post.createMany({
+    data: [
+      {
+        userId: user.id,
+        subId: sub1.id,
+        type: 'TEXT',
+        title:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+        content:
+          'Suspendisse in est ante in nibh mauris cursus mattis molestie. Viverra vitae congue eu consequat ac felis donec et odio. Felis donec et odio pellentesque diam volutpat commodo sed. Mattis enim ut tellus elementum sagittis vitae. Consectetur lorem donec massa sapien faucibus. Sed cras ornare arcu dui vivamus arcu. Aliquet risus feugiat in ante metus dictum at tempor. Pulvinar pellentesque habitant morbi tristique senectus et netus. Dictum varius duis at consectetur lorem donec massa. Arcu vitae elementum curabitur vitae nunc. Molestie ac feugiat sed lectus.',
+      },
+      {
+        userId: user.id,
+        subId: sub2.id,
+        type: 'TEXT',
+        title:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+        content:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lectus quam id leo in. Pellentesque adipiscing commodo elit at imperdiet dui accumsan sit amet. Lacus viverra vitae congue eu consequat ac felis donec et. Senectus et netus et malesuada fames ac. Consectetur lorem donec massa sapien. Velit laoreet id donec ultrices tincidunt arcu non sodales. Mus mauris vitae ultricies leo integer. Pharetra diam sit amet nisl suscipit. Arcu dui vivamus arcu felis bibendum ut. Semper auctor neque vitae tempus. Blandit turpis cursus in hac habitasse. Urna id volutpat lacus laoreet non curabitur.',
+      },
+    ],
+  })
+
   console.log(`Seeding finished.`)
 }
 

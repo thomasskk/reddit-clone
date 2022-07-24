@@ -10,7 +10,6 @@ import NProgress from 'nprogress'
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider } from '@mantine/notifications'
 import { Provider as JotaiProvider } from 'jotai'
-import { SSRProvider as AriaProvider } from 'react-aria'
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -42,17 +41,15 @@ const MyApp = ({
   }, [])
 
   return (
-    <AriaProvider>
-      <SessionProvider session={session}>
-        <JotaiProvider>
-          <MantineProvider emotionOptions={{ key: 'mantine', prepend: false }}>
-            <NotificationsProvider position='top-center' className='mt-24'>
-              {getLayout(<Component {...pageProps} />)}
-            </NotificationsProvider>
-          </MantineProvider>
-        </JotaiProvider>
-      </SessionProvider>
-    </AriaProvider>
+    <SessionProvider session={session}>
+      <JotaiProvider>
+        <MantineProvider emotionOptions={{ key: 'mantine', prepend: false }}>
+          <NotificationsProvider position='top-center' className='mt-24'>
+            {getLayout(<Component {...pageProps} />)}
+          </NotificationsProvider>
+        </MantineProvider>
+      </JotaiProvider>
+    </SessionProvider>
   )
 }
 

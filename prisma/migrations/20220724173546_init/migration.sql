@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "PostType" AS ENUM ('TEXT', 'IMAGE', 'VIDEO', 'AUDIO', 'LINK');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -40,7 +43,7 @@ CREATE TABLE "comments" (
     "up_count" INTEGER NOT NULL,
     "down_count" INTEGER NOT NULL,
     "is_deleted" INTEGER,
-    "submission_id" TEXT NOT NULL,
+    "post_id" TEXT NOT NULL,
     "comment_vote_tracker_id" TEXT NOT NULL,
 
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
@@ -90,7 +93,7 @@ CREATE TABLE "subs" (
     "creation_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "is_private" BOOLEAN NOT NULL,
     "is_authorized_only" BOOLEAN NOT NULL,
-    "last_submission_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "last_post_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "thumbnail_url" VARCHAR(500) NOT NULL,
     "color_theme" VARCHAR(20) NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -101,38 +104,37 @@ CREATE TABLE "subs" (
 );
 
 -- CreateTable
-CREATE TABLE "submissions" (
+CREATE TABLE "posts" (
     "id" TEXT NOT NULL,
-    "username" VARCHAR(50) NOT NULL,
+    "user_id" TEXT NOT NULL,
     "content" VARCHAR,
     "creation_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "last_edit_date" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "sub_name" VARCHAR(20) NOT NULL,
-    "type" INTEGER NOT NULL,
+    "sub_id" TEXT NOT NULL,
+    "type" "PostType" NOT NULL,
     "title" VARCHAR(200) NOT NULL,
-    "up_count" INTEGER NOT NULL,
-    "down_count" INTEGER NOT NULL,
+    "up_count" INTEGER NOT NULL DEFAULT 0,
+    "down_count" INTEGER NOT NULL DEFAULT 0,
     "thumbail" VARCHAR(150),
     "flair_label" VARCHAR(50),
-    "views" DOUBLE PRECISION NOT NULL,
-    "is_deleted" BOOLEAN NOT NULL,
+    "views" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "url" VARCHAR(3000),
-    "archive_date" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "submissions_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "submission_vote_trackers" (
+CREATE TABLE "post_vote_trackers" (
     "id" TEXT NOT NULL,
     "username" VARCHAR(50) NOT NULL,
     "vote_status" INTEGER NOT NULL,
     "creation_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ip_address" VARCHAR(90),
     "vote_value" DOUBLE PRECISION NOT NULL,
-    "submission_id" TEXT NOT NULL,
+    "post_id" TEXT NOT NULL,
 
-    CONSTRAINT "submission_vote_trackers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "post_vote_trackers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -163,7 +165,7 @@ ALTER TABLE "user_subs" ADD CONSTRAINT "user_subs_sub_name_fkey" FOREIGN KEY ("s
 ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_submission_id_fkey" FOREIGN KEY ("submission_id") REFERENCES "submissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_comment_vote_tracker_id_fkey" FOREIGN KEY ("comment_vote_tracker_id") REFERENCES "comment_vote_trackers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -178,7 +180,10 @@ ALTER TABLE "notification_contexts" ADD CONSTRAINT "notification_contexts_notifi
 ALTER TABLE "subs" ADD CONSTRAINT "subs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "submissions" ADD CONSTRAINT "submissions_sub_name_fkey" FOREIGN KEY ("sub_name") REFERENCES "subs"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "submission_vote_trackers" ADD CONSTRAINT "submission_vote_trackers_submission_id_fkey" FOREIGN KEY ("submission_id") REFERENCES "submissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "posts" ADD CONSTRAINT "posts_sub_id_fkey" FOREIGN KEY ("sub_id") REFERENCES "subs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "post_vote_trackers" ADD CONSTRAINT "post_vote_trackers_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

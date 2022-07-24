@@ -9,7 +9,7 @@ const Page: NextPageWithLayout = () => {
   const router = useRouter()
   const [_, setSubBadgeData] = useAtom(atoms.subBadgeData)
 
-  const subMut = t.sub.getSub.useQuery(
+  const query = t.sub.getSub.useQuery(
     {
       name: router.query.sub as string,
     },

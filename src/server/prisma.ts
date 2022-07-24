@@ -16,3 +16,9 @@ export const db: PrismaClient =
 if (process.env.NODE_ENV !== 'production') {
   prismaGlobal.prisma = db
 }
+
+prismaGlobal.prisma?.$on('query', (e) => {
+  console.log('Query: ' + e.query)
+  console.log('Params: ' + e.params)
+  console.log('Duration: ' + e.duration + 'ms')
+})
