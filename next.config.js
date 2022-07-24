@@ -1,11 +1,17 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
+    domains: ['*'],
   },
   experimental: {
     images: {
       allowFutureImage: true,
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '*',
+        },
+      ],
     },
   },
 }
