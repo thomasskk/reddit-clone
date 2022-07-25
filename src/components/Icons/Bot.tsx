@@ -1,0 +1,13 @@
+import * as React from "react";
+import { SVGProps } from "react";
+
+const SvgBot = (props: SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 0 1010 1000" {...props}>
+    <path
+      fill="currentColor"
+      d="M875 194H125q-34 0-57.5 23.5T44 275v600q0 34 23.5 57.5T125 956h750q34 0 57.5-23.5T956 875V275q0-34-23.5-57.5T875 194zm19 681q0 8-5.5 13.5T875 894H125q-8 0-13.5-5.5T106 875V275q0-8 5.5-13.5T125 256h750q8 0 13.5 5.5T894 275v600zM294 712h1q4 41 34.5 67.5T400 806h200q20 2 39.5-4t34.5-19.5 23.5-31.5 8.5-39V594H294v118zm62-56h288v56q0 19-16 26-11 6-28 6H400q-18 0-31-13t-13-31v-44zM500 81q28 0 48.5 20.5T569 150h62q0-36-17.5-66T566 36.5 500 19t-66 17.5T386.5 84 369 150h62q0-28 20.5-48.5T500 81zM250 400h100v100H250V400zm400 0h100v100H650V400z"
+    />
+  </svg>
+);
+
+export default SvgBot;

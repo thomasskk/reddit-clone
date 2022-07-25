@@ -1,11 +1,12 @@
-import { OptionalPortal, Skeleton } from '@mantine/core'
+import { Portal, Skeleton } from '@mantine/core'
 import { useClickOutside } from '@mantine/hooks'
 import { useAtom } from 'jotai'
 import { ReactNode, useRef, useState } from 'react'
 import { BsLayoutSidebarInset } from 'react-icons/bs'
 import { CgClose } from 'react-icons/cg'
-import { TbChevronDown } from 'react-icons/tb'
+import { CaretDown } from '~/components/Icons'
 import { SkeletonList } from '~/components/SkeletonList'
+import { useChildBlur } from '~/hooks/useChildBlur'
 import { useMenu } from '~/hooks/useMenu'
 import { atoms } from '~/store'
 import { inferQueryOutput, t } from '~/utils/trpc'
@@ -16,13 +17,12 @@ export type GetSubs = inferQueryOutput<'user.getSubs'>
 
 const MenuPortal = (props: { children: ReactNode; isOpen: boolean }) =>
   props.isOpen ? (
-    <OptionalPortal
-      position='sticky'
-      className='top-12'
+    <Portal
+      className='top-12 sticky'
       target={document.getElementById('portal_target')!}
     >
       {props.children}
-    </OptionalPortal>
+    </Portal>
   ) : (
     <>{props.children}</>
   )
@@ -58,23 +58,30 @@ export const CommunityMenu = () => {
     menuItems.clear()
   }
 
+  const { handleBlur } = useChildBlur()
+
   return (
-    <div className='relative w-64' ref={setNode} role='navigation'>
+    <div
+      className='relative w-64'
+      ref={setNode}
+      onBlur={handleBlur(() => !isSideMenu && setIsMenuOpen(false))}
+      onFocus={() => !isSideMenu && !isMenuOpen && setIsMenuOpen(true)}
+    >
       <button
         className={`h-9 w-full border rounded flex items-center justify-between gap-20 py-1 px-2 ${
           isMenuOpen && !isSideMenu
             ? 'border-b-0 border-gray-200 rounded-b-none mt-[-1px]'
             : 'border-transparent'
         } ${isSideMenu ? '' : 'border hover:border-gray-200'}`}
-        onClick={() => !isSideMenu && setIsMenuOpen((v) => !v)}
         aria-haspopup={!isSideMenu}
         aria-expanded={!isSideMenu && isMenuOpen}
         aria-controls={!isSideMenu ? 'navmenu1' : undefined}
-        id='navmenu1button'
+        id='navcommunitymenu'
+        onClick={(e) => e.currentTarget.blur()}
       >
         <SubBadge {...subBadgeData} />
         {!isSideMenu && (
-          <div className='flex gap-3'>
+          <div className='flex gap-3 items-center'>
             {isMenuOpen && (
               <BsLayoutSidebarInset
                 size={16}
@@ -84,14 +91,14 @@ export const CommunityMenu = () => {
                 }}
               />
             )}
-            <TbChevronDown size={16} />
+            <CaretDown className='w-5 h-5' />
           </div>
         )}
       </button>
       {isMenuOpen && (
         <MenuPortal isOpen={isSideMenu}>
           <ul
-            id='navmenu1'
+            id='navcommunitymenu'
             aria-labelledby='navmenu1button'
             role='menu'
             ref={ref}

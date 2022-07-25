@@ -1,6 +1,7 @@
 import { useClickOutside, useLocalStorage } from '@mantine/hooks'
 import { useEffect, useRef, useState } from 'react'
-import { RiSearchLine } from 'react-icons/ri'
+import { Search } from '~/components/Icons'
+import { useChildBlur } from '~/hooks/useChildBlur'
 import { useMenu } from '~/hooks/useMenu'
 import { t } from '~/utils/trpc'
 import { SearchMenu } from './SearchMenu'
@@ -35,13 +36,9 @@ export const SearchBar = () => {
     onEnter: () => {
       if (inputValue) {
         setSearchHistory((arr) => {
-          const set = new Set(arr)
-          set.add(inputValue)
-          arr = Array.from(set)
-          if (arr.length > 5) {
-            arr.shift()
-          }
-          return arr
+          const newArr = Array.from(new Set([...arr, inputValue]))
+          newArr.length > 5 && newArr.shift()
+          return newArr
         })
         menuItems.clear()
       }
@@ -64,6 +61,8 @@ export const SearchBar = () => {
     }
   }
 
+  const { handleBlur } = useChildBlur()
+
   return (
     <form
       aria-label='Search Social'
@@ -71,14 +70,16 @@ export const SearchBar = () => {
       role='search'
       ref={ref}
       autoComplete='off'
-      className='relative w-1/3'
+      className='relative w-full'
       onKeyDown={handleKeyDown}
+      onFocus={() => setIsMenuOpen(true)}
+      onBlur={handleBlur(() => setIsMenuOpen(false))}
     >
       <div
         className='relative group flex gap-2 h-9 items-center px-2 py-2 rounded border hover:border-blue-500 focus-within:border-blue-500 bg-primary2 hover:bg-primary1 focus-within:bg-primary1'
         onClick={() => setIsMenuOpen(true)}
       >
-        <button
+        <div
           onClick={() => setIsMenuOpen((v) => !v)}
           aria-haspopup={isMenuOpen}
           aria-expanded={isMenuOpen}
@@ -86,8 +87,8 @@ export const SearchBar = () => {
           id='searchmenubutton'
           className='cursor-default'
         >
-          <RiSearchLine size={20} className='text-text2' onClick={() => {}} />
-        </button>
+          <Search className='text-text2 w-5 h-5' onClick={() => {}} />
+        </div>
         <input
           ref={inputRef}
           value={inputValue}
@@ -107,12 +108,7 @@ export const SearchBar = () => {
         />
       </div>
       {isMenuOpen && (
-        <nav
-          id='navsearchmenu'
-          aria-labelledby='navsearchmenu'
-          role='menu'
-          className={`border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10`}
-        >
+        <>
           {isSearchMenu ? (
             <SearchMenu
               hoveredId={hoveredId}
@@ -131,7 +127,7 @@ export const SearchBar = () => {
               setSearchHistory={setSearchHistory}
             />
           )}
-        </nav>
+        </>
       )}
     </form>
   )

@@ -1,5 +1,5 @@
 import Image from 'next/future/image'
-import { AiFillHome } from 'react-icons/ai'
+import { HomeFill } from '~/components/Icons'
 
 export const SubBadge = (props: { name?: string; thumbnailUrl?: string }) => {
   return (
@@ -13,7 +13,7 @@ export const SubBadge = (props: { name?: string; thumbnailUrl?: string }) => {
           className='object-contain rounded-full shrink-0'
         />
       ) : (
-        <AiFillHome
+        <HomeFill
           className='w-5 h-5 shrink-0'
           role='img'
           aria-label='subverse logo'

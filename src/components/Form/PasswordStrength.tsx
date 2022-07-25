@@ -1,5 +1,5 @@
 import { Box, Progress, Text } from '@mantine/core'
-import { Cross1Icon } from '@radix-ui/react-icons'
+import { TbCircleX } from 'react-icons/tb'
 import { useRef, useState } from 'react'
 import { UseFormRegister } from 'react-proxy-form'
 import { Input } from './Input'
@@ -11,7 +11,7 @@ const PasswordRequirement = (props: { label: string }) => (
     mt={7}
     size='sm'
   >
-    <Cross1Icon />
+    <TbCircleX />
     <Box ml={10}>{props.label}</Box>
   </Text>
 )

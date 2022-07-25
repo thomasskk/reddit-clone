@@ -39,7 +39,7 @@ export const userRouter = trpc.router({
     .mutation(async ({ input }) => {
       await db.userSub.delete({
         where: {
-          id: input.id,
+          userId: input.id,
         },
       })
     }),
@@ -52,8 +52,37 @@ export const userRouter = trpc.router({
           isFavorite: input.favorite,
         },
         where: {
-          id: input.id,
+          userId: input.id,
         },
       })
     }),
+  //////////////////////////////////////////
+  getProfilData: authedProcedure.query(({ ctx }) =>
+    db.user.findFirstOrThrow({
+      where: { id: ctx.session!.user.id },
+      select: {},
+    })
+  ),
+  //////////////////////////////////////////
+  getPreferences: authedProcedure.query(({ ctx }) =>
+    db.userPreference.findFirstOrThrow({
+      where: { userId: ctx.session!.user.id },
+    })
+  ),
+  //////////////////////////////////////////
+  updatePreferences: authedProcedure
+    .input(
+      z.object({
+        key: z.literals(),
+        value: z.boolean().or(z.string().max(2)),
+      })
+    )
+    .query(({ ctx, input }) =>
+      db.userPreference.update({
+        data: {
+          [input.key]: input.value,
+        },
+        where: { userId: ctx.session!.user.id },
+      })
+    ),
 })

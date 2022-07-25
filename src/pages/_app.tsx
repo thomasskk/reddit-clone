@@ -7,7 +7,7 @@ import '../styles/globals.css'
 import 'nprogress/nprogress.css'
 import Router from 'next/router'
 import NProgress from 'nprogress'
-import { MantineProvider } from '@mantine/core'
+import { MantineProvider, createEmotionCache } from '@mantine/core'
 import { NotificationsProvider } from '@mantine/notifications'
 import { Provider as JotaiProvider } from 'jotai'
 
@@ -18,6 +18,8 @@ export type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
+
+const myCache = createEmotionCache({ key: 'mantine' })
 
 const MyApp = ({
   Component,
@@ -43,7 +45,11 @@ const MyApp = ({
   return (
     <SessionProvider session={session}>
       <JotaiProvider>
-        <MantineProvider emotionOptions={{ key: 'mantine', prepend: false }}>
+        <MantineProvider
+          emotionCache={myCache}
+          withGlobalStyles
+          withNormalizeCSS
+        >
           <NotificationsProvider position='top-center' className='mt-24'>
             {getLayout(<Component {...pageProps} />)}
           </NotificationsProvider>

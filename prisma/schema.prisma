@@ -8,33 +8,52 @@ datasource db {
 }
 
 model User {
-        id                   String         @id @default(cuid())
-        email                String         @unique
-        emailVerified        DateTime?      @map("email_verified")
+        id                   String           @id @default(cuid())
+        email                String           @unique
+        emailVerified        DateTime?        @map("email_verified")
         image                String?
-        username             String         @unique @db.VarChar(50)
-        passwordHash         String         @map("password_hash")
-        phoneNumber          String?        @unique @map("phone_number") @db.VarChar(20)
-        phoneNumberConfirmed Boolean        @default(false) @map("phone_number_confirmed")
-        twoFactorEnabled     Boolean        @default(false) @map("two_factor_enabled")
-        accessFailedCount    Int            @default(0) @map("access_failed_count")
-        registrationDate     DateTime       @default(now())
-        lastLoginFromIp      String         @map("last_login_from_ip") @db.VarChar(20)
-        lastLoginDate        DateTime       @default(now()) @map("last_login_date")
+        username             String           @unique @db.VarChar(50)
+        passwordHash         String           @map("password_hash")
+        phoneNumber          String?          @unique @map("phone_number") @db.VarChar(20)
+        phoneNumberConfirmed Boolean          @default(false) @map("phone_number_confirmed")
+        twoFactorEnabled     Boolean          @default(false) @map("two_factor_enabled")
+        accessFailedCount    Int              @default(0) @map("access_failed_count")
+        registrationDate     DateTime         @default(now())
+        lastLoginFromIp      String           @map("last_login_from_ip") @db.VarChar(20)
+        lastLoginDate        DateTime         @default(now()) @map("last_login_date")
         notifications        Notification[]
         Comment              Comment[]
         UserSub              UserSub[]
         Sub                  Sub[]
         Post                 Post[]
+        UserPreference       UserPreference[]
 
         @@map("users")
 }
 
+model UserPreference {
+        id                     String  @id @default(cuid())
+        userId                 String  @unique @map("user_id")
+        user                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+        lang                   String  @db.VarChar(2)
+        showPresence           Boolean @default(true) @map("show_presence")
+        videoAutoplay          Boolean @default(false) @map("video_autoplay")
+        countryCode            String  @db.VarChar(2)
+        collapseLeftBar        Boolean @default(false) @map("collapse_left_bar")
+        labelNsfw              Boolean @default(false) @map("label_nsfw")
+        badCommentAutoCollapse Boolean @default(false) @map("bad_comment_auto_collapse")
+        nightMode              Boolean @default(false) @map("nigth_mode")
+        searchIncludeNsfw      Boolean @default(false) @map("search_include_nsfw")
+        highligthNewComments   Boolean @default(true) @map("highligth_new_comments")
+
+        @@map("user_preferences")
+}
+
 model UserSub {
         id          String  @id @default(cuid())
-        userId      String  @map("user_id")
+        userId      String  @unique @map("user_id")
         user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-        subId       String  @map("sub_name")
+        subId       String  @unique @map("sub_name")
         sub         Sub     @relation(fields: [subId], references: [id])
         isModerator Boolean @default(false) @map("is_moderator")
         isFavorite  Boolean @default(false) @map("is_favorite")
@@ -45,9 +64,9 @@ model UserSub {
 model Comment {
         id                   String             @id @default(cuid())
         username             String             @db.VarChar(50)
-        userId               String             @map("user_id")
+        userId               String             @unique @map("user_id")
         user                 User               @relation(fields: [userId], references: [id])
-        parentId             Int                @map("parent_id")
+        parentId             Int                @unique @map("parent_id")
         content              String             @db.VarChar
         creationDate         DateTime           @default(now()) @map("creation_date")
         lastEditDate         DateTime           @default(now()) @map("last_edit_date")
@@ -55,7 +74,7 @@ model Comment {
         downCount            Int                @map("down_count")
         isDeleted            Int?               @map("is_deleted")
         post                 Post               @relation(fields: [postId], references: [id])
-        postId               String             @map("post_id")
+        postId               String             @unique @map("post_id")
         commentVoteTracker   CommentVoteTracker @relation(fields: [commentVoteTrackerId], references: [id])
         commentVoteTrackerId String             @unique @map("comment_vote_tracker_id")
 
@@ -84,7 +103,7 @@ model Notification {
         viewedAtDate        DateTime?             @map("viewed_at_date")
         avatarUrl           String                @map("avatar_url") @db.VarChar(500)
         user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-        userId              String                @map("user_id")
+        userId              String                @unique @map("user_id")
         notificationContext NotificationContext[]
 
         @@map("notifications")
@@ -110,7 +129,7 @@ model Sub {
         thumbnailUrl     String    @map("thumbnail_url") @db.VarChar(500)
         colorTheme       String    @map("color_theme") @db.VarChar(20)
         user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-        userId           String    @map("user_id")
+        userId           String    @unique @map("user_id")
         lastUpdateDate   DateTime  @default(now()) @map("last_update_date")
         post             Post[]
         memberCount      Int       @default(0) @map("member_count")
@@ -131,11 +150,11 @@ enum PostType {
 model Post {
         id              String            @id @default(cuid())
         user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-        userId          String            @map("user_id")
+        userId          String            @unique @map("user_id")
         content         String?           @db.VarChar
         creationDate    DateTime          @default(now()) @map("creation_date")
         lastEditDate    DateTime?         @default(now()) @map("last_edit_date")
-        subId           String            @map("sub_id")
+        subId           String            @unique @map("sub_id")
         sub             Sub               @relation(fields: [subId], references: [id])
         type            PostType
         title           String            @db.VarChar(200)
@@ -160,7 +179,7 @@ model PostVoteTracker {
         ipAddress    String?  @map("ip_address") @db.VarChar(90)
         voteValue    Float    @map("vote_value")
         post         Post     @relation(fields: [postId], references: [id])
-        postId       String   @map("post_id")
+        postId       String   @unique @map("post_id")
 
         @@map("post_vote_trackers")
 }

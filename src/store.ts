@@ -6,4 +6,6 @@ export const atoms = {
   subBadgeData: atom<{ name: string; thumbnailUrl: string } | undefined>(
     undefined
   ),
+  userThumbnailUrl: atom(''),
+  userName: atom(''),
 }
