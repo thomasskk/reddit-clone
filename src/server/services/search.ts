@@ -42,7 +42,9 @@ export const SearchService = () => {
             three.people().text() ||
             three.topics().text() ||
             three.places().text() ||
-            three.nouns(1).text(),
+            three.nouns(2).text() ||
+            three.nouns(1).text() ||
+            three.firstTerms().text(),
         }
       })
       //////////////////////////////////////////

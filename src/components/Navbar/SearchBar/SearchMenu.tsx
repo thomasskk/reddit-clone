@@ -1,14 +1,15 @@
 import Image from 'next/future/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { UseMenuHandleRef } from '~/hooks/useMenu'
 import { inferMutationOutput } from '~/utils/trpc'
 
 export const SearchMenu = (props: {
   hoveredId: string
   setHoveredId: (id: string) => void
-  menuItems: Map<string, { el: HTMLElement; cb?: () => void }>
   setInputValue: (value: string) => void
   searchData?: inferMutationOutput<'search.global'>
+  handleRef: UseMenuHandleRef
 }) => {
   const [data, setData] = useState(props.searchData)
 
@@ -17,22 +18,13 @@ export const SearchMenu = (props: {
   }, [props.searchData])
 
   return (
-    <ul
-      id='navsearchmenu'
-      aria-labelledby='navsearchmenu'
-      role='menu'
-      className='flex flex-col border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10'
-    >
+    <>
       {data?.map((sub) => (
         <li
           key={sub.id}
-          ref={(el) => {
-            el &&
-              props.menuItems.set(sub.id, {
-                el,
-                cb: () => props.setInputValue(`r/${sub.name}`),
-              })
-          }}
+          ref={props.handleRef(sub.id, () =>
+            props.setInputValue(`r/${sub.name}`)
+          )}
         >
           <Link href={`r/${sub.name}`} passHref>
             <a
@@ -66,6 +58,6 @@ export const SearchMenu = (props: {
           </Link>
         </li>
       ))}
-    </ul>
+    </>
   )
 }

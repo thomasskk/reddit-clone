@@ -7,6 +7,9 @@ import { t } from '~/utils/trpc'
 import { SearchMenu } from './SearchMenu'
 import { TrendMenu } from './TrendMenu'
 
+const MENU_ID = 'nav-search-menu'
+const MENU_CONTROL_ID = 'button-nav-search-menu'
+
 export const SearchBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
@@ -27,7 +30,13 @@ export const SearchBar = () => {
     },
   })
 
-  const { hoveredId, setHoveredId, menuItems, handleKeyDown } = useMenu({
+  const {
+    hoveredId,
+    setHoveredId,
+    menuItems,
+    handleKeyDown,
+    handleMenuItemsRef,
+  } = useMenu({
     onOutBoundUp: () => {
       setHoveredId('')
       setInputValue('')
@@ -77,14 +86,13 @@ export const SearchBar = () => {
     >
       <div
         className='relative group flex gap-2 h-9 items-center px-2 py-2 rounded border hover:border-blue-500 focus-within:border-blue-500 bg-primary2 hover:bg-primary1 focus-within:bg-primary1'
-        onClick={() => setIsMenuOpen(true)}
+        onMouseDown={() => setIsMenuOpen((v) => !v)}
       >
         <div
-          onClick={() => setIsMenuOpen((v) => !v)}
           aria-haspopup={isMenuOpen}
           aria-expanded={isMenuOpen}
-          aria-controls={isMenuOpen ? 'navsearchmenu' : undefined}
-          id='searchmenubutton'
+          aria-controls={isMenuOpen ? MENU_CONTROL_ID : undefined}
+          id={MENU_CONTROL_ID}
           className='cursor-default'
         >
           <Search className='text-text2 w-5 h-5' onClick={() => {}} />
@@ -108,17 +116,23 @@ export const SearchBar = () => {
         />
       </div>
       {isMenuOpen && (
-        <>
+        <ul
+          id={MENU_ID}
+          aria-labelledby={MENU_CONTROL_ID}
+          role='menu'
+          className='flex flex-col border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10'
+        >
           {isSearchMenu ? (
             <SearchMenu
               hoveredId={hoveredId}
               setHoveredId={setHoveredId}
-              menuItems={menuItems}
               setInputValue={setInputValue}
               searchData={mutation.data}
+              handleRef={handleMenuItemsRef}
             />
           ) : (
             <TrendMenu
+              handleRef={handleMenuItemsRef}
               searchHistory={searchHistory}
               hoveredId={hoveredId}
               setHoveredId={setHoveredId}
@@ -127,7 +141,7 @@ export const SearchBar = () => {
               setSearchHistory={setSearchHistory}
             />
           )}
-        </>
+        </ul>
       )}
     </form>
   )

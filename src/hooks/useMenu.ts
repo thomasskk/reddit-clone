@@ -1,6 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import React from 'react'
+export type UseMenuHandleRef = (
+  id: string,
+  cb?: () => void
+) => (el: HTMLElement | null) => void
+
+export type UserMenuItemsMap = Map<string, { el: HTMLElement; cb?: () => void }>
 
 export const useMenu = (
   args: {
@@ -18,8 +23,15 @@ export const useMenu = (
   } = {}
 ) => {
   const [hoveredId, setHoveredId] = useState('')
-  const menuItems = useRef(
-    new Map<string, { el: HTMLElement; cb: () => void }>()
+  const menuItems = useRef<UserMenuItemsMap>(new Map())
+
+  const handleMenuItemsRef: UseMenuHandleRef = useCallback(
+    (id, cb) => (el) => {
+      if (el) {
+        menuItems.current.set(id, { el, cb: cb })
+      }
+    },
+    []
   )
 
   useEffect(() => {
@@ -89,5 +101,6 @@ export const useMenu = (
     setHoveredId,
     menuItems: menuItems.current,
     handleKeyDown,
+    handleMenuItemsRef,
   }
 }

@@ -15,6 +15,9 @@ import { SubList } from './SubList'
 
 export type GetSubs = inferQueryOutput<'user.getSubs'>
 
+const MENU_ID = 'nav-community-menu'
+const MENU_CONTROL_ID = 'button-nav-community-menu'
+
 const MenuPortal = (props: { children: ReactNode; isOpen: boolean }) =>
   props.isOpen ? (
     <Portal
@@ -34,7 +37,13 @@ export const CommunityMenu = () => {
   const [node, setNode] = useState<any>(null)
   const [subs, setSubs] = useState<GetSubs>([])
 
-  const { hoveredId, setHoveredId, menuItems, handleKeyDown } = useMenu()
+  const {
+    hoveredId,
+    setHoveredId,
+    menuItems,
+    handleKeyDown,
+    handleMenuItemsRef,
+  } = useMenu()
 
   const filter = useRef('')
 
@@ -63,9 +72,9 @@ export const CommunityMenu = () => {
   return (
     <div
       className='relative w-64'
-      ref={setNode}
       onBlur={handleBlur(() => !isSideMenu && setIsMenuOpen(false))}
-      onFocus={() => !isSideMenu && !isMenuOpen && setIsMenuOpen(true)}
+      onFocus={() => !isSideMenu && setIsMenuOpen(true)}
+      ref={setNode}
     >
       <button
         className={`h-9 w-full border rounded flex items-center justify-between gap-20 py-1 px-2 ${
@@ -75,9 +84,9 @@ export const CommunityMenu = () => {
         } ${isSideMenu ? '' : 'border hover:border-gray-200'}`}
         aria-haspopup={!isSideMenu}
         aria-expanded={!isSideMenu && isMenuOpen}
-        aria-controls={!isSideMenu ? 'navmenu1' : undefined}
-        id='navcommunitymenu'
-        onClick={(e) => e.currentTarget.blur()}
+        aria-controls={!isSideMenu ? MENU_ID : undefined}
+        id={MENU_CONTROL_ID}
+        onMouseDown={() => !isSideMenu && setIsMenuOpen((v) => !v)}
       >
         <SubBadge {...subBadgeData} />
         {!isSideMenu && (
@@ -85,8 +94,8 @@ export const CommunityMenu = () => {
             {isMenuOpen && (
               <BsLayoutSidebarInset
                 size={16}
-                onClick={(e) => {
-                  e.stopPropagation()
+                onMouseDown={(e) => {
+                  e.preventDefault()
                   setIsSideMenu(true)
                 }}
               />
@@ -98,8 +107,8 @@ export const CommunityMenu = () => {
       {isMenuOpen && (
         <MenuPortal isOpen={isSideMenu}>
           <ul
-            id='navcommunitymenu'
-            aria-labelledby='navmenu1button'
+            id={MENU_ID}
+            aria-labelledby={MENU_CONTROL_ID}
             role='menu'
             ref={ref}
             className={`flex flex-col gap-5 border border-gray-200 rounded-b overflow-visible bg-primary1 ${
@@ -172,7 +181,7 @@ export const CommunityMenu = () => {
                           subs={subs}
                           setDataAndFilter={setDataAndFilter}
                           type={data.type as any}
-                          menuItems={menuItems}
+                          handleRef={handleMenuItemsRef}
                           hoveredId={hoveredId}
                           setHoveredId={setHoveredId}
                         />

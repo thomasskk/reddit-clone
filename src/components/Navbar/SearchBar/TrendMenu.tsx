@@ -2,12 +2,14 @@ import Image from 'next/future/image'
 import Link from 'next/link'
 import { Clear, LinkPost, Popular, Search } from '~/components/Icons'
 import { SkeletonList } from '~/components/SkeletonList'
+import { UseMenuHandleRef, UserMenuItemsMap } from '~/hooks/useMenu'
 import { t } from '~/utils/trpc'
 
 export const TrendMenu = (props: {
   hoveredId: string
   setHoveredId: (id: string) => void
-  menuItems: Map<string, { el: HTMLElement; cb?: () => void }>
+  handleRef: UseMenuHandleRef
+  menuItems: UserMenuItemsMap
   setInputValue: (value: string) => void
   searchHistory: string[]
   setSearchHistory: (value: (value: string[]) => string[]) => void
@@ -19,22 +21,11 @@ export const TrendMenu = (props: {
   })
 
   return (
-    <ul
-      id='navsearchmenu'
-      aria-labelledby='navsearchmenu'
-      role='menu'
-      className='flex flex-col border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10'
-    >
-      {props.searchHistory?.map((term, index) => (
+    <>
+      {props.searchHistory?.map((term) => (
         <li
           key={term}
-          ref={(el) =>
-            el &&
-            props.menuItems.set(term, {
-              el,
-              cb: () => props.setInputValue(term),
-            })
-          }
+          ref={props.handleRef(term, () => props.setInputValue(term))}
         >
           <Link href={`/search?q=${term}`} passHref>
             <a
@@ -78,13 +69,7 @@ export const TrendMenu = (props: {
             return (
               <li
                 key={id}
-                ref={(el) =>
-                  el &&
-                  props.menuItems.set(id, {
-                    el,
-                    cb: () => props.setInputValue(keywords),
-                  })
-                }
+                ref={props.handleRef(id, () => props.setInputValue(keywords))}
               >
                 <Link href={`/search?q=${keywords}`} passHref>
                   <a
@@ -129,6 +114,6 @@ export const TrendMenu = (props: {
           }
         })}
       </SkeletonList>
-    </ul>
+    </>
   )
 }

@@ -23,47 +23,13 @@ export const userRouter = trpc.router({
     })
   }),
   //////////////////////////////////////////
-  addSub: authedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      await db.userSub.create({
-        data: {
-          userId: ctx.session!.user.id,
-          subId: input.id,
-        },
-      })
-    }),
-  //////////////////////////////////////////
-  removeSub: authedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ input }) => {
-      await db.userSub.delete({
-        where: {
-          userId: input.id,
-        },
-      })
-    }),
-  //////////////////////////////////////////
-  updateFavoriteSub: authedProcedure
-    .input(z.object({ id: z.string(), favorite: z.boolean() }))
-    .mutation(async ({ input }) => {
-      await db.userSub.update({
-        data: {
-          isFavorite: input.favorite,
-        },
-        where: {
-          userId: input.id,
-        },
-      })
-    }),
-  //////////////////////////////////////////
-  getProfilData: authedProcedure.query(({ ctx }) =>
+  getProfileData: authedProcedure.query(({ ctx }) =>
     db.user.findFirstOrThrow({
       where: { id: ctx.session!.user.id },
       select: {},
     })
   ),
-  //////////////////////////////////////////
+  /////////////////////////////////////////
   getPreferences: authedProcedure.query(({ ctx }) =>
     db.userPreference.findFirstOrThrow({
       where: { userId: ctx.session!.user.id },
@@ -85,4 +51,11 @@ export const userRouter = trpc.router({
         where: { userId: ctx.session!.user.id },
       })
     ),
+  //////////////////////////////////////////
+  getRecentCommunities: authedProcedure.query(({ ctx, input }) =>
+    db.userHistory.findFirstOrThrow({
+      select: { recentCommunities: true },
+      where: { userId: ctx.session!.user.id },
+    })
+  ),
 })

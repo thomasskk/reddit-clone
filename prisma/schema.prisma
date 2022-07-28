@@ -27,6 +27,7 @@ model User {
         Sub                  Sub[]
         Post                 Post[]
         UserPreference       UserPreference[]
+        UserHistory          UserHistory?
 
         @@map("users")
 }
@@ -47,6 +48,13 @@ model UserPreference {
         highligthNewComments   Boolean @default(true) @map("highligth_new_comments")
 
         @@map("user_preferences")
+}
+
+model UserHistory {
+        id                String @id @default(cuid())
+        recentCommunities Json[]
+        userId            String @unique @map("user_id")
+        user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSub {
