@@ -20,6 +20,7 @@ export const SearchBar = () => {
   })
 
   const inputRef = useRef<HTMLInputElement>(null)
+
   const ref = useClickOutside(() => setIsMenuOpen(false))
 
   const mutation = t.search.global.useMutation({
@@ -54,12 +55,6 @@ export const SearchBar = () => {
     },
   })
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      inputRef.current?.focus()
-    }
-  }, [isMenuOpen, isSearchMenu])
-
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
     if (!e.target.value) {
@@ -77,16 +72,20 @@ export const SearchBar = () => {
       aria-label='Search Social'
       id='search'
       role='search'
-      ref={ref}
       autoComplete='off'
       className='relative w-full'
-      onKeyDown={handleKeyDown}
       onFocus={() => setIsMenuOpen(true)}
       onBlur={handleBlur(() => setIsMenuOpen(false))}
+      ref={ref}
     >
       <div
         className='relative group flex gap-2 h-9 items-center px-2 py-2 rounded border hover:border-blue-500 focus-within:border-blue-500 bg-primary2 hover:bg-primary1 focus-within:bg-primary1'
-        onMouseDown={() => setIsMenuOpen((v) => !v)}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          setIsMenuOpen(true)
+          inputRef.current?.focus()
+        }}
+        onKeyDown={handleKeyDown}
       >
         <div
           aria-haspopup={isMenuOpen}
@@ -121,6 +120,7 @@ export const SearchBar = () => {
           aria-labelledby={MENU_CONTROL_ID}
           role='menu'
           className='flex flex-col border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10'
+          tabIndex={-1}
         >
           {isSearchMenu ? (
             <SearchMenu

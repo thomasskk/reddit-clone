@@ -64,54 +64,53 @@ export const TrendMenu = (props: {
       </li>
       <SkeletonList visible={query.isLoading} count={5} height={20}>
         {query.data?.map(({ post, keywords }, index, arr) => {
-          if (post) {
-            const id = post.id + index
-            return (
-              <li
-                key={id}
-                ref={props.handleRef(id, () => props.setInputValue(keywords))}
-              >
-                <Link href={`/search?q=${keywords}`} passHref>
-                  <a
-                    tabIndex={-1}
-                    className={`${props.hoveredId === id ? 'bg-gray-50' : ''} ${
-                      index === arr.length - 1
-                        ? 'border-0'
-                        : 'border-b border-gray-200'
-                    } hover:bg-gray-50 flex p-3 cursor-pointer w-full justify-between`}
-                  >
-                    <div className='flex gap-2'>
-                      <Popular className='text-blue-600 w-5 h-5 shrink-0' />
-                      <div className='flex flex-col gap-1'>
-                        <span className='font-semibold text-sm first-letter:uppercase'>
-                          {keywords}
+          const id = post.id + index
+
+          return (
+            <li
+              key={id}
+              ref={props.handleRef(id, () => props.setInputValue(keywords))}
+            >
+              <Link href={`/search?q=${keywords}`} passHref>
+                <a
+                  tabIndex={-1}
+                  className={`${props.hoveredId === id ? 'bg-gray-50' : ''} ${
+                    index === arr.length - 1
+                      ? 'border-0'
+                      : 'border-b border-gray-200'
+                  } hover:bg-gray-50 flex p-3 cursor-pointer w-full justify-between`}
+                >
+                  <div className='flex gap-2'>
+                    <Popular className='text-blue-600 w-5 h-5 shrink-0' />
+                    <div className='flex flex-col gap-1'>
+                      <span className='font-semibold text-sm first-letter:uppercase'>
+                        {keywords}
+                      </span>
+                      <p className='text-sm first-letter:uppercase text-text2'>
+                        {post.title}
+                      </p>
+                      <div className='flex gap-1'>
+                        <Image
+                          src={post.sub.thumbnailUrl}
+                          width={14}
+                          height={14}
+                          alt={post.sub.name}
+                          className='object-contain rounded-full shrink-0'
+                        />
+                        <span className='text-xs text-text2'>
+                          r/{post.sub.name} and more
                         </span>
-                        <p className='text-sm first-letter:uppercase text-text2'>
-                          {post.title}
-                        </p>
-                        <div className='flex gap-1'>
-                          <Image
-                            src={post.sub.thumbnailUrl}
-                            width={14}
-                            height={14}
-                            alt={post.sub.name}
-                            className='object-contain rounded-full shrink-0'
-                          />
-                          <span className='text-xs text-text2'>
-                            r/{post.sub.name} and more
-                          </span>
-                        </div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className='px-3 self-center'>
-                      <LinkPost className='w-5 h-5 shrink-0 text-blue-600' />
-                    </div>
-                  </a>
-                </Link>
-              </li>
-            )
-          }
+                  <div className='px-3 self-center'>
+                    <LinkPost className='w-5 h-5 shrink-0 text-blue-600' />
+                  </div>
+                </a>
+              </Link>
+            </li>
+          )
         })}
       </SkeletonList>
     </>

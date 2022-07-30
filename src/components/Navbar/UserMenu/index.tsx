@@ -1,4 +1,3 @@
-import { Skeleton } from '@mantine/core'
 import { useClickOutside } from '@mantine/hooks'
 import { useState } from 'react'
 import {
@@ -15,22 +14,30 @@ import {
 } from '~/components/Icons'
 import { useChildBlur } from '~/hooks/useChildBlur'
 import { useMenu } from '~/hooks/useMenu'
-import { t } from '~/utils/trpc'
+import { useRecentSub } from '~/hooks/useRecentSub'
+import Image from 'next/future/image'
 
 const MENU_ID = 'nav-user-menu'
 const MENU_CONTROL_ID = 'button-nav-user-menu'
 
-const GetRecentsCommunities = () => {
-  const query = t.user.getRecentCommunities.useQuery()
+const RecentsCommunities = () => {
+  const { recentSubs } = useRecentSub()
 
   return (
-    <Skeleton>
-      <ul>
-        {query.data?.recentCommunities.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </Skeleton>
+    <ul>
+      {recentSubs.map((sub) => (
+        <li key={sub.name} className='flex gap-2 items-center'>
+          <Image
+            src={sub.thumbnailUrl}
+            width={20}
+            height={20}
+            alt={sub.name}
+            className='object-contain rounded-full shrink-0'
+          />
+          <span className='text-text1 text-sm font-medium '>{sub.name}</span>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -48,12 +55,12 @@ const menuLabelIconItems = () => [
     icon: <Live />,
   },
   {
-    label: 'History',
+    label: 'Recent Communities',
     icon: <History />,
-    child: <GetRecentsCommunities />,
+    child: <RecentsCommunities />,
   },
   {
-    label: 'Discover',
+    label: 'Explore',
     icon: <Discover />,
   },
   {
@@ -61,15 +68,15 @@ const menuLabelIconItems = () => [
     icon: <Settings />,
   },
   {
-    label: 'Campaign',
+    label: 'Advertise on Reddit',
     icon: <Campaign />,
   },
   {
-    label: 'Help',
+    label: 'Help Center',
     icon: <Help />,
   },
   {
-    label: 'Info',
+    label: 'More',
     icon: <Info />,
   },
   {
@@ -81,8 +88,7 @@ const menuLabelIconItems = () => [
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const [node, setNode] = useState<any>(null)
-  const ref = useClickOutside(() => setIsMenuOpen(false), null, [node])
+  const ref = useClickOutside(() => setIsMenuOpen(false))
 
   const { hoveredId, setHoveredId, handleKeyDown, handleMenuItemsRef } =
     useMenu({
@@ -97,8 +103,7 @@ export const UserMenu = () => {
       className='relative w-32'
       onBlur={handleBlur(() => setIsMenuOpen(false))}
       onFocus={() => setIsMenuOpen(true)}
-      ref={setNode}
-      onKeyDown={handleKeyDown}
+      ref={ref}
     >
       <button
         className='h-9 w-full border rounded flex items-center justify-between gap-20 py-1 px-2'
@@ -106,15 +111,19 @@ export const UserMenu = () => {
         aria-expanded={isMenuOpen}
         aria-controls={MENU_ID}
         id={MENU_CONTROL_ID}
-        onMouseDown={() => setIsMenuOpen((v) => !v)}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          setIsMenuOpen((v) => !v)
+        }}
+        onKeyDown={handleKeyDown}
       ></button>
       {isMenuOpen && (
         <ul
           id={MENU_ID}
           aria-labelledby={MENU_CONTROL_ID}
           role='menu'
-          className='border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-full top-10'
-          ref={ref}
+          className='border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-52 top-10 right-0'
+          tabIndex={-1}
         >
           {menuLabelIconItems().map((item, index) => (
             <li

@@ -14,6 +14,7 @@ export const userRouter = trpc.router({
             title: true,
             name: true,
             thumbnailUrl: true,
+            id: true,
           },
         },
         isFavorite: true,
@@ -51,11 +52,4 @@ export const userRouter = trpc.router({
         where: { userId: ctx.session!.user.id },
       })
     ),
-  //////////////////////////////////////////
-  getRecentCommunities: authedProcedure.query(({ ctx, input }) =>
-    db.userHistory.findFirstOrThrow({
-      select: { recentCommunities: true },
-      where: { userId: ctx.session!.user.id },
-    })
-  ),
 })

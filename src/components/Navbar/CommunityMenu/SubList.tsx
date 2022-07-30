@@ -44,7 +44,7 @@ export const SubList = (props: {
         const refId = id + props.type
 
         return (
-          <li role='none' key={refId} tabIndex={-1}>
+          <li role='menuitem' key={refId}>
             <Link href={`/r/${sub.name}`} passHref>
               <a
                 ref={props.handleRef(refId)}
@@ -52,6 +52,7 @@ export const SubList = (props: {
 		flex justify-between items-center cursor-pointer`}
                 role='menuitem'
                 onMouseEnter={() => props.setHoveredId(refId)}
+                tabIndex={-1}
               >
                 <div className='px-3 py-2'>
                   <SubBadge thumbnailUrl={sub.thumbnailUrl} name={sub.name} />
@@ -61,7 +62,7 @@ export const SubList = (props: {
                     e.stopPropagation()
                     e.preventDefault()
                     mutation.mutate({
-                      id,
+                      subId: sub.id,
                       favorite: !isFavorite,
                     })
                     const newData = [...props.subs]

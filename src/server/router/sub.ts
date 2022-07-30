@@ -39,24 +39,30 @@ export const subRouter = trpc.router({
     }),
   //////////////////////////////////////////
   unsuscribe: authedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ subId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       await db.userSub.delete({
         where: {
-          userId: input.id,
+          userId_subId: {
+            subId: input.subId,
+            userId: ctx.session!.user.id,
+          },
         },
       })
     }),
   //////////////////////////////////////////
   updateFavorites: authedProcedure
-    .input(z.object({ id: z.string(), favorite: z.boolean() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ subId: z.string(), favorite: z.boolean() }))
+    .mutation(async ({ input, ctx }) => {
       await db.userSub.update({
         data: {
           isFavorite: input.favorite,
         },
         where: {
-          userId: input.id,
+          userId_subId: {
+            subId: input.subId,
+            userId: ctx.session!.user.id,
+          },
         },
       })
     }),

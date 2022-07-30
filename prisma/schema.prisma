@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-        id                   String           @id @default(cuid())
+        id                   String           @id @unique @default(cuid())
         email                String           @unique
         emailVerified        DateTime?        @map("email_verified")
         image                String?
@@ -51,21 +51,21 @@ model UserPreference {
 }
 
 model UserHistory {
-        id                String @id @default(cuid())
-        recentCommunities Json[]
-        userId            String @unique @map("user_id")
-        user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+        id     String @id @default(cuid())
+        userId String @unique @map("user_id")
+        user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSub {
         id          String  @id @default(cuid())
-        userId      String  @unique @map("user_id")
+        userId      String  @map("user_id")
         user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-        subId       String  @unique @map("sub_name")
+        subId       String  @map("sub_id")
         sub         Sub     @relation(fields: [subId], references: [id])
         isModerator Boolean @default(false) @map("is_moderator")
         isFavorite  Boolean @default(false) @map("is_favorite")
 
+        @@unique([userId, subId])
         @@map("user_subs")
 }
 
@@ -137,12 +137,13 @@ model Sub {
         thumbnailUrl     String    @map("thumbnail_url") @db.VarChar(500)
         colorTheme       String    @map("color_theme") @db.VarChar(20)
         user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-        userId           String    @unique @map("user_id")
+        userId           String    @map("user_id")
         lastUpdateDate   DateTime  @default(now()) @map("last_update_date")
         post             Post[]
         memberCount      Int       @default(0) @map("member_count")
         UserSub          UserSub[]
 
+        @@unique([id, userId])
         @@index([name])
         @@map("subs")
 }
@@ -158,7 +159,7 @@ enum PostType {
 model Post {
         id              String            @id @default(cuid())
         user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-        userId          String            @unique @map("user_id")
+        userId          String            @map("user_id")
         content         String?           @db.VarChar
         creationDate    DateTime          @default(now()) @map("creation_date")
         lastEditDate    DateTime?         @default(now()) @map("last_edit_date")
@@ -173,9 +174,10 @@ model Post {
         views           Float             @default(0)
         isDeleted       Boolean           @default(false) @map("is_deleted")
         url             String?           @db.VarChar(3000)
-        comment         Comment[]
+        Comment         Comment[]
         PostVoteTracker PostVoteTracker[]
 
+        @@unique([id, userId])
         @@map("posts")
 }
 

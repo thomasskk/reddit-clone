@@ -1,7 +1,7 @@
 import { Portal, Skeleton } from '@mantine/core'
 import { useClickOutside } from '@mantine/hooks'
 import { useAtom } from 'jotai'
-import { ReactNode, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { BsLayoutSidebarInset } from 'react-icons/bs'
 import { CgClose } from 'react-icons/cg'
 import { CaretDown } from '~/components/Icons'
@@ -34,7 +34,6 @@ export const CommunityMenu = () => {
   const [subBadgeData] = useAtom(atoms.subBadgeData)
   const [isSideMenu, setIsSideMenu] = useAtom(atoms.isSideMenu)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [node, setNode] = useState<any>(null)
   const [subs, setSubs] = useState<GetSubs>([])
 
   const {
@@ -47,9 +46,7 @@ export const CommunityMenu = () => {
 
   const filter = useRef('')
 
-  const ref = useClickOutside(() => !isSideMenu && setIsMenuOpen(false), null, [
-    node,
-  ])
+  const ref = useClickOutside(() => !isSideMenu && setIsMenuOpen(false))
 
   const query = t.user.getSubs.useQuery(undefined, {
     onSuccess: (subs) => setDataAndFilter(subs),
@@ -74,7 +71,7 @@ export const CommunityMenu = () => {
       className='relative w-64'
       onBlur={handleBlur(() => !isSideMenu && setIsMenuOpen(false))}
       onFocus={() => !isSideMenu && setIsMenuOpen(true)}
-      ref={setNode}
+      ref={ref}
     >
       <button
         className={`h-9 w-full border rounded flex items-center justify-between gap-20 py-1 px-2 ${
@@ -86,7 +83,10 @@ export const CommunityMenu = () => {
         aria-expanded={!isSideMenu && isMenuOpen}
         aria-controls={!isSideMenu ? MENU_ID : undefined}
         id={MENU_CONTROL_ID}
-        onMouseDown={() => !isSideMenu && setIsMenuOpen((v) => !v)}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          !isSideMenu && setIsMenuOpen((v) => !v)
+        }}
       >
         <SubBadge {...subBadgeData} />
         {!isSideMenu && (
@@ -95,6 +95,7 @@ export const CommunityMenu = () => {
               <BsLayoutSidebarInset
                 size={16}
                 onMouseDown={(e) => {
+                  e.stopPropagation()
                   e.preventDefault()
                   setIsSideMenu(true)
                 }}
@@ -110,15 +111,15 @@ export const CommunityMenu = () => {
             id={MENU_ID}
             aria-labelledby={MENU_CONTROL_ID}
             role='menu'
-            ref={ref}
             className={`flex flex-col gap-5 border border-gray-200 rounded-b overflow-visible bg-primary1 ${
               isSideMenu
                 ? 'h-[calc(100vh-3rem)] w-72 py-2'
                 : 'absolute max-h-[480px] overflow-y-auto border-t-0 w-full py-3'
             }`}
             onKeyDown={handleKeyDown}
+            tabIndex={-1}
           >
-            <li className='px-3 flex flex-col gap-1' tabIndex={-1}>
+            <li className='px-3 flex flex-col gap-1'>
               {isSideMenu && (
                 <div className='flex justify-between items-center mb-1'>
                   <h6 className='text-text2 uppercase text-xxs font-medium'>

@@ -41,7 +41,6 @@ CREATE TABLE "user_preferences" (
 -- CreateTable
 CREATE TABLE "UserHistory" (
     "id" TEXT NOT NULL,
-    "recentCommunities" JSONB[],
     "user_id" TEXT NOT NULL,
 
     CONSTRAINT "UserHistory_pkey" PRIMARY KEY ("id")
@@ -51,7 +50,7 @@ CREATE TABLE "UserHistory" (
 CREATE TABLE "user_subs" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
-    "sub_name" TEXT NOT NULL,
+    "sub_id" TEXT NOT NULL,
     "is_moderator" BOOLEAN NOT NULL DEFAULT false,
     "is_favorite" BOOLEAN NOT NULL DEFAULT false,
 
@@ -165,6 +164,9 @@ CREATE TABLE "post_vote_trackers" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_id_key" ON "users"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
@@ -180,10 +182,7 @@ CREATE UNIQUE INDEX "user_preferences_user_id_key" ON "user_preferences"("user_i
 CREATE UNIQUE INDEX "UserHistory_user_id_key" ON "UserHistory"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_subs_user_id_key" ON "user_subs"("user_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_subs_sub_name_key" ON "user_subs"("sub_name");
+CREATE UNIQUE INDEX "user_subs_user_id_sub_id_key" ON "user_subs"("user_id", "sub_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "comments_user_id_key" ON "comments"("user_id");
@@ -204,16 +203,16 @@ CREATE UNIQUE INDEX "notifications_user_id_key" ON "notifications"("user_id");
 CREATE UNIQUE INDEX "subs_name_key" ON "subs"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "subs_user_id_key" ON "subs"("user_id");
-
--- CreateIndex
 CREATE INDEX "subs_name_idx" ON "subs"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "posts_user_id_key" ON "posts"("user_id");
+CREATE UNIQUE INDEX "subs_id_user_id_key" ON "subs"("id", "user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "posts_sub_id_key" ON "posts"("sub_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "posts_id_user_id_key" ON "posts"("id", "user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "post_vote_trackers_post_id_key" ON "post_vote_trackers"("post_id");
@@ -228,7 +227,7 @@ ALTER TABLE "UserHistory" ADD CONSTRAINT "UserHistory_user_id_fkey" FOREIGN KEY 
 ALTER TABLE "user_subs" ADD CONSTRAINT "user_subs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_subs" ADD CONSTRAINT "user_subs_sub_name_fkey" FOREIGN KEY ("sub_name") REFERENCES "subs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_subs" ADD CONSTRAINT "user_subs_sub_id_fkey" FOREIGN KEY ("sub_id") REFERENCES "subs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
