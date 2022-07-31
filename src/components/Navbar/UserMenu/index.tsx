@@ -1,108 +1,39 @@
 import { useClickOutside } from '@mantine/hooks'
 import { useState } from 'react'
-import {
-  Campaign,
-  Coins,
-  Discover,
-  Help,
-  History,
-  Info,
-  Live,
-  Premium,
-  Rules,
-  Settings,
-} from '~/components/Icons'
 import { useChildBlur } from '~/hooks/useChildBlur'
-import { useMenu } from '~/hooks/useMenu'
-import { useRecentSub } from '~/hooks/useRecentSub'
-import Image from 'next/future/image'
+import { useSess } from '~/hooks/useSess'
+import { menuContentLogIn, menuContentLogOut } from './contentData'
+import { MenuItem, MenuItemContent } from './MenuItem'
 
 const MENU_ID = 'nav-user-menu'
 const MENU_CONTROL_ID = 'button-nav-user-menu'
 
-const RecentsCommunities = () => {
-  const { recentSubs } = useRecentSub()
-
-  return (
-    <ul>
-      {recentSubs.map((sub) => (
-        <li key={sub.name} className='flex gap-2 items-center'>
-          <Image
-            src={sub.thumbnailUrl}
-            width={20}
-            height={20}
-            alt={sub.name}
-            className='object-contain rounded-full shrink-0'
-          />
-          <span className='text-text1 text-sm font-medium '>{sub.name}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-const menuLabelIconItems = () => [
-  {
-    label: 'Coins',
-    icon: <Coins />,
-  },
-  {
-    label: 'Premium',
-    icon: <Premium />,
-  },
-  {
-    label: 'Talk',
-    icon: <Live />,
-  },
-  {
-    label: 'Recent Communities',
-    icon: <History />,
-    child: <RecentsCommunities />,
-  },
-  {
-    label: 'Explore',
-    icon: <Discover />,
-  },
-  {
-    label: 'Settings',
-    icon: <Settings />,
-  },
-  {
-    label: 'Advertise on Reddit',
-    icon: <Campaign />,
-  },
-  {
-    label: 'Help Center',
-    icon: <Help />,
-  },
-  {
-    label: 'More',
-    icon: <Info />,
-  },
-  {
-    label: 'Terms & Policies',
-    icon: <Rules />,
-  },
-]
-
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [data, setData] = useState<MenuItemContent[]>()
 
   const ref = useClickOutside(() => setIsMenuOpen(false))
 
-  const { hoveredId, setHoveredId, handleKeyDown, handleMenuItemsRef } =
-    useMenu({
-      onOutBoundUp: () => setHoveredId(''),
-      onEscape: () => setIsMenuOpen(false),
-    })
-
   const { handleBlur } = useChildBlur()
+
+  const { isAuthReady } = useSess({
+    onUnauth: () => setData(menuContentLogOut),
+    onAuth: () => setData(menuContentLogIn),
+  })
 
   return (
     <div
       className='relative w-32'
       onBlur={handleBlur(() => setIsMenuOpen(false))}
-      onFocus={() => setIsMenuOpen(true)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          setIsMenuOpen(true)
+        }
+
+        if (e.key === 'Escape') {
+          setIsMenuOpen(false)
+        }
+      }}
       ref={ref}
     >
       <button
@@ -115,32 +46,21 @@ export const UserMenu = () => {
           e.preventDefault()
           setIsMenuOpen((v) => !v)
         }}
-        onKeyDown={handleKeyDown}
       ></button>
-      {isMenuOpen && (
+      {isMenuOpen && isAuthReady && data && (
         <ul
-          id={MENU_ID}
-          aria-labelledby={MENU_CONTROL_ID}
           role='menu'
-          className='border border-gray-200 rounded-b overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-52 top-10 right-0'
-          tabIndex={-1}
+          aria-labelledby={MENU_CONTROL_ID}
+          id={MENU_ID}
+          className='border border-gray-200 rounde overflow-visible bg-primary1 absolute max-h-[480px] overflow-y-auto w-64 top-10 right-0 shrink-0 py-3'
         >
-          {menuLabelIconItems().map((item, index) => (
-            <li
-              key={item.label}
-              className={`${
-                hoveredId === item.label ? 'bg-gray-50' : ''
-              } flex items-center gap-2 px-4 py-3`}
-              onMouseEnter={() => setHoveredId(item.label)}
-              role='menuitem'
-              ref={handleMenuItemsRef(item.label)}
-              aria-label={item.label}
-              aria-haspopup={false}
-            >
-              <div className='w-5 h-5 shrink-0'>{item.icon}</div>
-              <span className='text-sm'>{item.label}</span>
-            </li>
-          ))}
+          {data.map((item, index) => {
+            if (item.content) {
+              return item.content
+            }
+
+            return <MenuItem {...item} key={item?.label || '' + index} />
+          })}
         </ul>
       )}
     </div>

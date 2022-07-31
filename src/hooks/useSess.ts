@@ -2,10 +2,14 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export const useSess = (args: {
-  redirectHref?: string
-  redirectOn?: 'authenticated' | 'unauthenticated'
-}) => {
+export const useSess = (
+  args: {
+    redirectHref?: string
+    redirectOn?: 'authenticated' | 'unauthenticated'
+    onAuth?: () => void
+    onUnauth?: () => void
+  } = {}
+) => {
   const { redirectHref = '/', redirectOn } = args
 
   const session = useSession()
@@ -17,7 +21,19 @@ export const useSess = (args: {
     }
   }, [redirectHref, redirectOn, router, session.data])
 
+  useEffect(() => {
+    if (session.status === 'unauthenticated') {
+      args.onUnauth?.()
+    }
+    if (session.status === 'authenticated') {
+      args.onAuth?.()
+    }
+  }, [args, session.status])
+
   return {
-    isReady: !(session.status === 'loading' || session.status === redirectOn),
+    isAuthReady: !(
+      session.status === 'loading' || session.status === redirectOn
+    ),
+    session,
   }
 }

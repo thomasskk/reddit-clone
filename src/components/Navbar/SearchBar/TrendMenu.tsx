@@ -5,9 +5,15 @@ import { SkeletonList } from '~/components/SkeletonList'
 import { UseMenuHandleRef, UserMenuItemsMap } from '~/hooks/useMenu'
 import { t } from '~/utils/trpc'
 
-export const TrendMenu = (props: {
+export const TrendMenu = ({
+  hoveredId,
+  handleRef,
+  menuItems,
+  searchHistory,
+  setInputValue,
+  setSearchHistory,
+}: {
   hoveredId: string
-  setHoveredId: (id: string) => void
   handleRef: UseMenuHandleRef
   menuItems: UserMenuItemsMap
   setInputValue: (value: string) => void
@@ -22,15 +28,12 @@ export const TrendMenu = (props: {
 
   return (
     <>
-      {props.searchHistory?.map((term) => (
-        <li
-          key={term}
-          ref={props.handleRef(term, () => props.setInputValue(term))}
-        >
+      {searchHistory?.map((term) => (
+        <li key={term} ref={handleRef(term, () => setInputValue(term))}>
           <Link href={`/search?q=${term}`} passHref>
             <a
               className={`${
-                props.hoveredId === term ? 'bg-gray-50' : ''
+                hoveredId === term ? 'bg-gray-50' : ''
               } hover:bg-gray-50 flex justify-between gap-2 cursor-pointer`}
               tabIndex={-1}
             >
@@ -42,12 +45,12 @@ export const TrendMenu = (props: {
                 className='py-2 px-4 flex items-center'
                 onClick={(e) => {
                   e.preventDefault()
-                  props.setSearchHistory((v) => {
+                  setSearchHistory((v) => {
                     const set = new Set(v)
                     set.delete(term)
                     return Array.from(set)
                   })
-                  props.menuItems.delete(term)
+                  menuItems.delete(term)
                 }}
               >
                 <Clear className='shrink-0 h-5 w-5 text-text1' />
@@ -56,7 +59,7 @@ export const TrendMenu = (props: {
           </Link>
         </li>
       ))}
-      {props.searchHistory?.length > 0 && <div className='h-1 bg-gray-100' />}
+      {searchHistory?.length > 0 && <div className='h-1 bg-gray-100' />}
       <li>
         <h6 className='text-text2 uppercase text-xs font-semibold p-3'>
           trending today
@@ -67,14 +70,11 @@ export const TrendMenu = (props: {
           const id = post.id + index
 
           return (
-            <li
-              key={id}
-              ref={props.handleRef(id, () => props.setInputValue(keywords))}
-            >
+            <li key={id} ref={handleRef(id, () => setInputValue(keywords))}>
               <Link href={`/search?q=${keywords}`} passHref>
                 <a
                   tabIndex={-1}
-                  className={`${props.hoveredId === id ? 'bg-gray-50' : ''} ${
+                  className={`${hoveredId === id ? 'bg-gray-50' : ''} ${
                     index === arr.length - 1
                       ? 'border-0'
                       : 'border-b border-gray-200'

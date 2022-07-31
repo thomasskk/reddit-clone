@@ -16,21 +16,19 @@ type Props = {
   errors?: string[]
 }
 
-export const Input = (props: Props) => {
-  const {
-    error,
-    label,
-    apiError,
-    register,
-    required,
-    autoComplete,
-    disabled,
-    children,
-    hidden,
-    errors = [],
-    ...attr
-  } = props
-
+export const Input = ({
+  error,
+  label,
+  apiError,
+  register,
+  required,
+  autoComplete,
+  disabled,
+  children,
+  hidden,
+  errors = [],
+  ...attr
+}: Props) => {
   const err = error(register.name)
   const id = useId()
 

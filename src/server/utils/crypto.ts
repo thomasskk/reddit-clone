@@ -6,8 +6,8 @@ import { promisify } from 'util'
 
 export type Expiration = `${number}${'d' | 'h' | 'm' | 's' | 'y'}`
 
-type MssgObj = {
-  mssg: any
+type Input = {
+  content: any
   ex: number
 }
 
@@ -64,8 +64,8 @@ export const cryptoUtils = {
 
     const input = Buffer.from(value.slice(0, split), ENCODING)
 
-    const mssgObj: MssgObj = JSON.parse(input.toString())
-    const { mssg, ex } = mssgObj
+    const parsedInput: Input = JSON.parse(input.toString())
+    const { content, ex } = parsedInput
 
     if (ex && ex < Math.floor(Date.now() / 1000)) {
       throw new Error('token expired')
@@ -91,6 +91,6 @@ export const cryptoUtils = {
       throw new Error('invalid token')
     }
 
-    return mssg
+    return content
   },
 }

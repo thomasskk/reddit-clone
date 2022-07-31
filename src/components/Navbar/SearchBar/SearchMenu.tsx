@@ -4,32 +4,34 @@ import { useEffect, useState } from 'react'
 import { UseMenuHandleRef } from '~/hooks/useMenu'
 import { inferMutationOutput } from '~/utils/trpc'
 
-export const SearchMenu = (props: {
+export const SearchMenu = ({
+  hoveredId,
+  setInputValue,
+  handleRef,
+  searchData,
+}: {
   hoveredId: string
-  setHoveredId: (id: string) => void
   setInputValue: (value: string) => void
-  searchData?: inferMutationOutput<'search.global'>
   handleRef: UseMenuHandleRef
+  searchData?: inferMutationOutput<'search.global'>
 }) => {
-  const [data, setData] = useState(props.searchData)
+  const [data, setData] = useState(searchData)
 
   useEffect(() => {
-    props.searchData && setData(props.searchData)
-  }, [props.searchData])
+    searchData && setData(searchData)
+  }, [searchData])
 
   return (
     <>
       {data?.map((sub) => (
         <li
           key={sub.id}
-          ref={props.handleRef(sub.id, () =>
-            props.setInputValue(`r/${sub.name}`)
-          )}
+          ref={handleRef(sub.id, () => setInputValue(`r/${sub.name}`))}
         >
           <Link href={`r/${sub.name}`} passHref>
             <a
               className={`${
-                props.hoveredId === sub.id ? 'bg-gray-50' : ''
+                hoveredId === sub.id ? 'bg-gray-50' : ''
               } hover:bg-gray-50 flex px-4 py-3 gap-2 cursor-pointer`}
               tabIndex={-1}
             >

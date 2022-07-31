@@ -4,8 +4,7 @@ type Props = {
   error?: string[]
 }
 
-export const Error = (props: Props) => {
-  const { error } = props
+export const Error = ({ error }: Props) => {
   const ref = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {

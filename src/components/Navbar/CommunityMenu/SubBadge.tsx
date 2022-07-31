@@ -1,15 +1,21 @@
 import Image from 'next/future/image'
 import { HomeFill } from '~/components/Icons'
 
-export const SubBadge = (props: { name?: string; thumbnailUrl?: string }) => {
+export const SubBadge = ({
+  name,
+  thumbnailUrl,
+}: {
+  name?: string
+  thumbnailUrl?: string
+}) => {
   return (
     <div className='flex gap-2 items-center'>
-      {props.thumbnailUrl && props.name ? (
+      {thumbnailUrl && name ? (
         <Image
-          src={props.thumbnailUrl}
+          src={thumbnailUrl}
           width={20}
           height={20}
-          alt={props.name}
+          alt={name}
           className='object-contain rounded-full shrink-0'
         />
       ) : (
@@ -20,7 +26,7 @@ export const SubBadge = (props: { name?: string; thumbnailUrl?: string }) => {
         />
       )}
       <span className='text-text1 text-sm font-medium '>
-        {props.name ? `r/${props.name}` : 'Home'}
+        {name ? `r/${name}` : 'Home'}
       </span>
     </div>
   )

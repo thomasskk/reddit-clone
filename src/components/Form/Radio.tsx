@@ -18,18 +18,16 @@ type Props = {
   isLoading?: boolean
 }
 
-export const Radio = (props: Props) => {
-  const {
-    radios,
-    label,
-    defaultCheckedIndex,
-    defaultChecked,
-    onChange,
-    name,
-    transform,
-    isLoading = false,
-  } = props
-
+export const Radio = ({
+  radios,
+  label,
+  defaultCheckedIndex,
+  defaultChecked,
+  onChange,
+  name,
+  transform,
+  isLoading = false,
+}: Props) => {
   const id = useId()
 
   const { register, error } = useFormContext<any>()

@@ -1,5 +1,5 @@
 import { useClickOutside, useLocalStorage } from '@mantine/hooks'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Search } from '~/components/Icons'
 import { useChildBlur } from '~/hooks/useChildBlur'
 import { useMenu } from '~/hooks/useMenu'
@@ -125,7 +125,6 @@ export const SearchBar = () => {
           {isSearchMenu ? (
             <SearchMenu
               hoveredId={hoveredId}
-              setHoveredId={setHoveredId}
               setInputValue={setInputValue}
               searchData={mutation.data}
               handleRef={handleMenuItemsRef}
@@ -135,7 +134,6 @@ export const SearchBar = () => {
               handleRef={handleMenuItemsRef}
               searchHistory={searchHistory}
               hoveredId={hoveredId}
-              setHoveredId={setHoveredId}
               menuItems={menuItems}
               setInputValue={setInputValue}
               setSearchHistory={setSearchHistory}

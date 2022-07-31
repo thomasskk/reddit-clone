@@ -6,7 +6,14 @@ import { t } from '~/utils/trpc'
 import { GetSubs } from './index'
 import { SubBadge } from './SubBadge'
 
-export const SubList = (props: {
+export const SubList = ({
+  subs,
+  setDataAndFilter,
+  type,
+  handleRef,
+  setHoveredId,
+  hoveredId,
+}: {
   subs: GetSubs
   setDataAndFilter: (data: GetSubs) => void
   type: 'all' | 'favorites' | 'mod'
@@ -18,40 +25,40 @@ export const SubList = (props: {
 
   return (
     <>
-      {props.type === 'all' && (
+      {type === 'all' && (
         <li
           tabIndex={-1}
           role='menuitem'
-          onMouseEnter={() => props.setHoveredId('all')}
+          onMouseEnter={() => setHoveredId('all')}
           className={`${
-            props.hoveredId === 'all' ? 'bg-gray-50' : ''
+            hoveredId === 'all' ? 'bg-gray-50' : ''
           } px-3 py-2 flex gap-1 items-center cursor-pointer`}
-          ref={props.handleRef('all')}
+          ref={handleRef('all')}
         >
           <FiPlus className='w-5 h-5' />
           <span className='text-sm text-text1'>Create community</span>
         </li>
       )}
-      {props.subs.map(({ sub, isFavorite, isModerator, id }, index) => {
-        if (props.type === 'favorites' && !isFavorite) {
+      {subs.map(({ sub, isFavorite, isModerator, id }, index) => {
+        if (type === 'favorites' && !isFavorite) {
           return null
         }
 
-        if (props.type === 'mod' && !isModerator) {
+        if (type === 'mod' && !isModerator) {
           return null
         }
 
-        const refId = id + props.type
+        const refId = id + type
 
         return (
-          <li role='menuitem' key={refId}>
+          <li key={refId}>
             <Link href={`/r/${sub.name}`} passHref>
               <a
-                ref={props.handleRef(refId)}
-                className={`${props.hoveredId === refId ? 'bg-gray-50' : ''}
+                ref={handleRef(refId)}
+                className={`${hoveredId === refId ? 'bg-gray-50' : ''}
 		flex justify-between items-center cursor-pointer`}
                 role='menuitem'
-                onMouseEnter={() => props.setHoveredId(refId)}
+                onMouseEnter={() => setHoveredId(refId)}
                 tabIndex={-1}
               >
                 <div className='px-3 py-2'>
@@ -65,9 +72,9 @@ export const SubList = (props: {
                       subId: sub.id,
                       favorite: !isFavorite,
                     })
-                    const newData = [...props.subs]
+                    const newData = [...subs]
                     newData[index]!.isFavorite = !isFavorite
-                    props.setDataAndFilter(newData)
+                    setDataAndFilter(newData)
                   }}
                   className='px-3 py-2'
                 >

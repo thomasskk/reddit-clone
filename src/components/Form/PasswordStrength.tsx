@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { UseFormRegister } from 'react-proxy-form'
 import { Input } from './Input'
 
-const PasswordRequirement = (props: { label: string }) => (
+const PasswordRequirement = ({ label }: { label: string }) => (
   <Text
     color='red'
     sx={{ display: 'flex', alignItems: 'center' }}
@@ -12,7 +12,7 @@ const PasswordRequirement = (props: { label: string }) => (
     size='sm'
   >
     <TbCircleX />
-    <Box ml={10}>{props.label}</Box>
+    <Box ml={10}>{label}</Box>
   </Text>
 )
 
@@ -36,7 +36,11 @@ const getStrength = (password: string) => {
   return Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 10)
 }
 
-export const PasswordStrength = (props: {
+export const PasswordStrength = ({
+  register,
+  name,
+  error,
+}: {
   register: UseFormRegister<any>
   name: string
   error: any
@@ -55,14 +59,14 @@ export const PasswordStrength = (props: {
     <Input
       required
       label='password'
-      register={props.register(props.name, {
+      register={register(name, {
         type: 'password',
         onChange: (_, v) => {
           init.current = true
           setValue(v)
         },
       })}
-      error={props.error}
+      error={error}
     >
       {init.current && (
         <>

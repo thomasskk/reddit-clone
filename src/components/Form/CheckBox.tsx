@@ -13,8 +13,16 @@ type Props = {
   message?: UseFormRegisterOptions<any, any>['message']
 }
 
-export const CheckBox = (props: Props) => {
-  const { checkboxes, label, onChange, name, transform } = props
+export const CheckBox = ({
+  checkboxes,
+  required,
+  label,
+  name,
+  onChange,
+  transform,
+  validation,
+  message,
+}: Props) => {
   const id = useId()
 
   const { register, error } = useFormContext<any>()
@@ -35,12 +43,12 @@ export const CheckBox = (props: Props) => {
                 transform,
                 onChange,
                 defaultChecked: checked,
-                validation: props.validation,
-                message: props.message,
+                validation,
+                message,
                 value,
               })}
               className='checkbox peer'
-              required={props.required}
+              required={required}
             />
             <label
               htmlFor={id + index}
