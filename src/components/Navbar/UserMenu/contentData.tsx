@@ -25,6 +25,7 @@ const RecentCommunities = () => {
 
   return (
     <MenuItem
+      key='recentCommunities'
       {...{
         label: 'Recent Communities',
         icon: <History />,
@@ -39,7 +40,7 @@ const RecentCommunities = () => {
               className='object-contain rounded-full shrink-0'
             />
           ),
-          key: sub.name,
+          keyProps: sub.name,
         })),
       }}
     />

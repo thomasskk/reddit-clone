@@ -1,7 +1,7 @@
 import { Portal, Skeleton } from '@mantine/core'
 import { useClickOutside } from '@mantine/hooks'
 import { useAtom } from 'jotai'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useRef, useState } from 'react'
 import { BsLayoutSidebarInset } from 'react-icons/bs'
 import { CgClose } from 'react-icons/cg'
 import { CaretDown } from '~/components/Icons'
