@@ -69,6 +69,7 @@ const Page: NextPageWithLayout = () => {
           })}
           error={error}
           label='email'
+          animated
         />
         <PasswordStrength
           register={register}
@@ -82,6 +83,7 @@ const Page: NextPageWithLayout = () => {
           })}
           error={error}
           label='confirm password'
+          animated
         />
         <Input
           register={register('user.username', {
@@ -102,6 +104,7 @@ const Page: NextPageWithLayout = () => {
           })}
           error={error}
           label='username'
+          animated
         />
       </div>
       <Button type='submit'>Register</Button>

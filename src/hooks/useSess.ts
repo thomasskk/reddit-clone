@@ -3,14 +3,21 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
 export const useSess = (
-  args: {
-    redirectHref?: string
-    redirectOn?: 'authenticated' | 'unauthenticated'
-    onAuth?: () => void
-    onUnauth?: () => void
-  } = {}
+  args:
+    | {
+        redirectHref: string
+        redirectOn: 'authenticated' | 'unauthenticated'
+        onAuth?: () => void
+        onUnauth?: () => void
+      }
+    | {
+        redirectHref?: never
+        redirectOn?: never
+        onAuth?: () => void
+        onUnauth?: () => void
+      } = {}
 ) => {
-  const { redirectHref = '/', redirectOn } = args
+  const { redirectHref, redirectOn } = args
 
   const session = useSession()
   const router = useRouter()

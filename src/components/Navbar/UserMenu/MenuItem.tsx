@@ -1,7 +1,7 @@
 import { Switch } from '@mantine/core'
 import Link from 'next/link'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { CaretDown, CaretUp } from '~/components/Icons'
+import { Caret } from '../Caret'
 
 export interface MenuItemContent {
   label?: string
@@ -20,20 +20,6 @@ export interface MenuItemContent {
     defaultValue?: boolean
   }
   onClick?: () => void
-}
-
-const Caret = ({
-  isUp = true,
-  className = '',
-}: {
-  isUp?: boolean
-  className?: string
-}) => {
-  return isUp ? (
-    <CaretDown className={className} />
-  ) : (
-    <CaretUp className={className} />
-  )
 }
 
 export const MenuItem = ({
@@ -63,10 +49,12 @@ export const MenuItem = ({
 
   const handleMouseDown = (e: any) => {
     e.preventDefault()
+    e.stopPropagation()
 
     if (isChild) {
       setDisplayChild((v) => !v)
     }
+
     if (type === 'switch') {
       setIsSwitchChecked((v) => !v)
     }
@@ -81,53 +69,51 @@ export const MenuItem = ({
   }
 
   return (
-    <>
-      <li>
-        {type === 'presentation' ? (
-          <div
-            role='presentation'
-            className={`flex items-center justify-between gap-5 px-5 py-2 ${className}`}
-          >
-            <div className='flex items-center gap-3 pr-2 text-text2'>
+    <li>
+      {type === 'presentation' ? (
+        <div
+          role='presentation'
+          className={`flex items-center justify-between gap-5 px-5 py-2 ${className}`}
+        >
+          <div className='flex items-center gap-3 pr-2 text-text2'>
+            <div className='h-5 w-5'>{icon}</div>
+            <div className='text-sm font-medium'>{label}</div>
+          </div>
+        </div>
+      ) : (
+        <div
+          role='menuitem'
+          className={`focus:bg-gray-100 hover:bg-gray-50 flex items-center justify-between gap-5 px-5 py-3 cursor-pointer shrink-0 ${className}`}
+          onMouseDown={handleMouseDown}
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+        >
+          {type === 'link' ? (
+            <Link href={linkOpts!.href!} passHref>
+              <a className='flex items-center gap-3 pr-2'>
+                <div className='h-5 w-5'>{icon}</div>
+                <div className='text-sm font-medium'>{label}</div>
+              </a>
+            </Link>
+          ) : (
+            <div className='flex items-center gap-3 pr-2'>
               <div className='h-5 w-5'>{icon}</div>
               <div className='text-sm font-medium'>{label}</div>
             </div>
-          </div>
-        ) : (
-          <div
-            role='menuitem'
-            className={`focus:bg-gray-100 hover:bg-gray-50 flex items-center justify-between gap-5 px-5 py-3 cursor-pointer shrink-0 ${className}`}
-            onMouseDown={handleMouseDown}
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
-          >
-            {type === 'link' ? (
-              <Link href={linkOpts!.href!} passHref>
-                <a className='flex items-center gap-3 pr-2'>
-                  <div className='h-5 w-5'>{icon}</div>
-                  <div className='text-sm font-medium'>{label}</div>
-                </a>
-              </Link>
-            ) : (
-              <div className='flex items-center gap-3 pr-2'>
-                <div className='h-5 w-5'>{icon}</div>
-                <div className='text-sm font-medium'>{label}</div>
-              </div>
-            )}
-            {type === 'switch' && <Switch checked={isSwitchChecked} readOnly />}
-            {isChild && <Caret isUp={!!isChildDisplayed} className='w-5 h-5' />}
-          </div>
-        )}
-        {isChildDisplayed && childrenContent ? (
-          <ul>
-            {childrenContent?.map((content, index) => (
-              <MenuItem key={content.keyProps || index} {...content} />
-            ))}
-          </ul>
-        ) : (
-          children
-        )}
-      </li>
-    </>
+          )}
+          {type === 'switch' && <Switch checked={isSwitchChecked} readOnly />}
+          {isChild && <Caret isUp={!!isChildDisplayed} className='w-5 h-5' />}
+        </div>
+      )}
+      {isChildDisplayed && childrenContent ? (
+        <ul>
+          {childrenContent?.map((content, index) => (
+            <MenuItem key={content.keyProps || index} {...content} />
+          ))}
+        </ul>
+      ) : (
+        children
+      )}
+    </li>
   )
 }

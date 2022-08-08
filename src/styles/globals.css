@@ -9,7 +9,10 @@
   }
 
   .input-form {
-    @apply peer-focus:text-blue-600 rounded flex p-2 text-sm text-gray-900 bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600;
+    @apply peer-focus:text-blue-600 rounded flex p-2 pl-3 text-sm text-gray-900 bg-transparent border border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600;
+  }
+  .button {
+    @apply disabled:opacity-70 text-white justify-center py-1 px-2 rounded flex items-center text-lg font-semibold border-0;
   }
 }
 

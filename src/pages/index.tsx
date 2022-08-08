@@ -13,7 +13,7 @@ const Page: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className='h-screen w-full bg-red-100 shrink'>HELLO WORLD</div>
+      <div className='h-screen w-full bg-black shrink'>HELLO WORLD</div>
     </>
   )
 }

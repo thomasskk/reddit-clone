@@ -11,7 +11,14 @@ export const loginSchema = z.object({
 
 export const registerSchema = loginSchema.and(
   z.object({
-    username: z.string(),
+    username: z
+      .string()
+      .min(3, 'Username must be between 3 and 20 characters')
+      .max(20, 'Username must be between 3 and 20 characters')
+      .pattern(
+        /^[a-zA-Z0-9_.-]*$/,
+        'Letters, numbers, dashes, and underscores only. Please try again without symbols.'
+      ),
   })
 )
 

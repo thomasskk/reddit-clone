@@ -14,7 +14,11 @@ export const Error = ({ error }: Props) => {
   return (
     <>
       {error && (
-        <p role='alert' ref={ref} className='scroll-mt-40 text-sm text-red-600'>
+        <p
+          role='alert'
+          ref={ref}
+          className='scroll-mt-40 text-xs text-red-600 font-semibold'
+        >
           {error[0]}
         </p>
       )}

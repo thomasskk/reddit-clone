@@ -19,7 +19,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-const myCache = createEmotionCache({ key: 'mantine' })
+const myCache = createEmotionCache({ key: 'mantine', prepend: false })
 
 const MyApp = ({
   Component,

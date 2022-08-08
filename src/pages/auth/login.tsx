@@ -26,9 +26,12 @@ const Page: NextPageWithLayout = () => {
     onSuccess: () => router.push('/'),
   })
 
-  const { isReady } = useSess({ redirectOn: 'authenticated' })
+  const { isAuthReady } = useSess({
+    redirectOn: 'authenticated',
+    redirectHref: '/',
+  })
 
-  if (!isReady) {
+  if (!isAuthReady) {
     return null
   }
 
@@ -56,24 +59,40 @@ const Page: NextPageWithLayout = () => {
   })
 
   return (
-    <form onSubmit={onSubmit} className='flex flex-col gap-10'>
-      <h2 className='font-bold text-xl'>Log in</h2>
+    <form onSubmit={onSubmit} className='flex flex-col gap-5'>
+      <div className='flex flex-col mb-5 gap-2'>
+        <h2 className='font-medium text-xl'>Log in</h2>
+        <p className='text-xs'>
+          By continuing, you agree to our User Agreement and Privacy Policy.
+        </p>
+      </div>
       <div className='flex flex-col gap-3 relative'>
         <LoadingOverlay visible={isLoading} />
-        <Input register={register('email')} error={error} label='email' />
+        <Input
+          register={register('email')}
+          error={error}
+          label='email'
+          animated
+        />
         <Input
           register={register('password', { type: 'password' })}
           error={error}
           label='password'
+          animated
         />
       </div>
-      <Button type='submit' color='blue' loading={isLoading}>
-        Submit
+      <Button
+        type='submit'
+        color='blue'
+        loading={isLoading}
+        className='uppercase w-72'
+      >
+        Log in
       </Button>
       <p className='text-xs flex gap-1'>
-        No account ?
+        New to Reddit?
         <Link href='/auth/register' passHref>
-          <a className='text-blue-500'> Register</a>
+          <a className='text-blue-500 uppercase font-extrabold'> Sign Up</a>
         </Link>
       </p>
     </form>

@@ -1,4 +1,5 @@
 module.exports = {
+  important: '#__next',
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     screens: {
@@ -10,6 +11,7 @@ module.exports = {
     },
     extend: {
       fontSize: {
+        xxxs: ['0.55rem', '1.125rem'],
         xxs: ['0.625rem', '1.125rem'],
       },
       boxShadow: {
@@ -24,6 +26,7 @@ module.exports = {
         primary1: 'white',
         primary2: '#F6F7F8',
         primary3: '',
+        button: '#0079D3',
         text1: '#1c1c1c',
         text2: '#6b7280',
       },

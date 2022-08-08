@@ -73,7 +73,7 @@ export const SearchBar = () => {
       id='search'
       role='search'
       autoComplete='off'
-      className='relative w-full'
+      className='relative w-full max-w-xl'
       onFocus={() => setIsMenuOpen(true)}
       onBlur={handleBlur(() => setIsMenuOpen(false))}
       ref={ref}

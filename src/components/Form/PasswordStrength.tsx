@@ -57,7 +57,6 @@ export const PasswordStrength = ({
 
   return (
     <Input
-      required
       label='password'
       register={register(name, {
         type: 'password',
@@ -65,8 +64,10 @@ export const PasswordStrength = ({
           init.current = true
           setValue(v)
         },
+        required: true,
       })}
       error={error}
+      animated
     >
       {init.current && (
         <>
